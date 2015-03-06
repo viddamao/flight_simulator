@@ -22,8 +22,12 @@ public class FlightSim extends Scene {
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
     private float FLIGHT_SPEED = 0.01f;
-    private boolean ROTATE_RIGHT = false;
-    private boolean ROTATE_LEFT = true;
+    private boolean TILT_RIGHT = false;
+    private boolean TILT_LEFT = false;
+    private boolean BANK_RIGHT = false;
+    private boolean BANK_LEFT = false;
+    
+    
     // animation state
     private float myAngle;
     private float myScale;
@@ -82,13 +86,21 @@ public class FlightSim extends Scene {
     @Override
     public void animate (GL2 gl, GLU glu, GLUT glut) {
         gl.glTranslatef(0, 0, FLIGHT_SPEED);
-        if (ROTATE_RIGHT) {
-        	gl.glRotatef(0.1f, 0, 0, 1);
-        	ROTATE_RIGHT = false;
+        if (BANK_RIGHT) {
+        	gl.glRotatef(0.25f, 0, 1, 0);
+        	BANK_RIGHT = false;
         }
-        if (ROTATE_LEFT) {
-        	gl.glRotatef(-0.1f, 0, 0, 1);
-        	ROTATE_LEFT = false;
+        if (BANK_LEFT) {
+        	gl.glRotatef(-0.25f, 0, 1, 0);
+        	BANK_LEFT = false;
+        }
+        if (TILT_RIGHT) {
+        	gl.glRotatef(0.25f, 0, 0, 1);
+        	TILT_RIGHT = false;
+        }
+        if (TILT_LEFT) {
+        	gl.glRotatef(-0.25f, 0, 0, 1);
+        	TILT_LEFT = false;
         }
     }
 
@@ -148,11 +160,17 @@ public class FlightSim extends Scene {
         case KeyEvent.VK_DOWN:
         	FLIGHT_SPEED -= SPEED_INCREMENT;
         	break;
+        case KeyEvent.VK_X:
+        	TILT_RIGHT = true;
+        	break;
+        case KeyEvent.VK_Z:
+        	TILT_LEFT = true;
+        	break;
         case KeyEvent.VK_RIGHT:
-        	ROTATE_RIGHT = true;
+        	BANK_RIGHT = true;
         	break;
         case KeyEvent.VK_LEFT:
-        	ROTATE_LEFT = true;
+        	BANK_LEFT = true;
         	break;
         }
     }
