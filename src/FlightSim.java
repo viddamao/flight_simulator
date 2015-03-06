@@ -17,9 +17,10 @@ import framework.Scene;
  * @author Robert C. Duvall
  */
 public class FlightSim extends Scene {
-    private final String DEFAULT_MAP_FILE = "images/austrailia_topo.jpg";
-    private final float HEIGHT_RATIO = 1.5f;
+    private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
+    private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
+    private float FLIGHT_SPEED = 0.01f;
     // animation state
     private float myAngle;
     private float myScale;
@@ -45,7 +46,7 @@ public class FlightSim extends Scene {
      */
     @Override
     public void init (GL2 gl, GLU glu, GLUT glut) {
-        myAngle = 0.0f;
+        myAngle = -25.0f;
         myScale = 0.05f;
         myStepSize = 16;
         isCompiled = false;
@@ -68,7 +69,6 @@ public class FlightSim extends Scene {
             gl.glEndList();
             isCompiled = true;
         }
-        gl.glRotatef(myAngle, 1.0f, 0.0f, 0.0f);
         gl.glScalef(myScale, myScale * HEIGHT_RATIO, myScale);
         gl.glCallList(TERRAIN_ID);
     }
@@ -78,7 +78,7 @@ public class FlightSim extends Scene {
      */
     @Override
     public void animate (GL2 gl, GLU glu, GLUT glut) {
-        myAngle += 0.25;
+        gl.glTranslatef(0, 0, FLIGHT_SPEED);
     }
 
     /**
@@ -86,8 +86,8 @@ public class FlightSim extends Scene {
      */
     @Override
     public void setCamera (GL2 gl, GLU glu, GLUT glut) {
-        glu.gluLookAt(0, 150, 5, // from position
-                      0, 0, 0,   // to position
+        glu.gluLookAt(0, 7, -33, // from position
+                      0, 5, 20,   // to position
                       0, 1, 0);  // up direction
     }
 
