@@ -22,6 +22,8 @@ public class FlightSim extends Scene {
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
     private float FLIGHT_SPEED = 0.01f;
+    private boolean ROTATE_RIGHT = false;
+    private boolean ROTATE_LEFT = true;
     // animation state
     private float myAngle;
     private float myScale;
@@ -80,6 +82,14 @@ public class FlightSim extends Scene {
     @Override
     public void animate (GL2 gl, GLU glu, GLUT glut) {
         gl.glTranslatef(0, 0, FLIGHT_SPEED);
+        if (ROTATE_RIGHT) {
+        	gl.glRotatef(0.1f, 0, 0, 1);
+        	ROTATE_RIGHT = false;
+        }
+        if (ROTATE_LEFT) {
+        	gl.glRotatef(-0.1f, 0, 0, 1);
+        	ROTATE_LEFT = false;
+        }
     }
 
     /**
@@ -137,6 +147,12 @@ public class FlightSim extends Scene {
         	break;
         case KeyEvent.VK_DOWN:
         	FLIGHT_SPEED -= SPEED_INCREMENT;
+        	break;
+        case KeyEvent.VK_RIGHT:
+        	ROTATE_RIGHT = true;
+        	break;
+        case KeyEvent.VK_LEFT:
+        	ROTATE_LEFT = true;
         	break;
         }
     }
