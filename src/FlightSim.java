@@ -17,7 +17,8 @@ import framework.Scene;
  * @author Robert C. Duvall
  */
 public class FlightSim extends Scene {
-    private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
+    private static final float SPEED_INCREMENT = 0.02f;
+	private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
     private float FLIGHT_SPEED = 0.01f;
@@ -131,6 +132,12 @@ public class FlightSim extends Scene {
                 myStepSize *= 2;
             isCompiled = false;
             break;
+        case KeyEvent.VK_UP:
+        	FLIGHT_SPEED += SPEED_INCREMENT;
+        	break;
+        case KeyEvent.VK_DOWN:
+        	FLIGHT_SPEED -= SPEED_INCREMENT;
+        	break;
         }
     }
 
