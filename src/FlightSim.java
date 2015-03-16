@@ -3,6 +3,7 @@ import java.io.IOException;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
+import javax.swing.JOptionPane;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 
@@ -186,6 +187,13 @@ public class FlightSim extends Scene {
 	    break;
 	case KeyEvent.VK_LEFT:
 	    BANK_LEFT = true;
+	    break;
+	case KeyEvent.VK_R:
+	    
+	    break;	    
+	case KeyEvent.VK_Q:
+	    JOptionPane.showMessageDialog(null, "Thanks for using the FlightSim","Message", JOptionPane.INFORMATION_MESSAGE);
+	    System.exit(1);
 	    break;
 	}
     }
