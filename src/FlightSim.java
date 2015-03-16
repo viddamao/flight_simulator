@@ -21,6 +21,7 @@ public class FlightSim extends Scene {
     private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
+    private final float DEFAULT_FLIGHT_SPEED=0.01f;
     private float FLIGHT_SPEED = 0.01f;
     private boolean TILT_RIGHT = false;
     private boolean TILT_LEFT = false;
@@ -189,7 +190,7 @@ public class FlightSim extends Scene {
 	    BANK_LEFT = true;
 	    break;
 	case KeyEvent.VK_R:
-	    
+	    FLIGHT_SPEED=DEFAULT_FLIGHT_SPEED;
 	    break;	    
 	case KeyEvent.VK_Q:
 	    JOptionPane.showMessageDialog(null, "Thanks for using the FlightSim","Message", JOptionPane.INFORMATION_MESSAGE);
