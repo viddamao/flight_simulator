@@ -26,7 +26,7 @@ public class FlightSim extends Scene {
     private boolean TILT_RIGHT = false;
     private boolean TILT_LEFT = false;
     private boolean OBJECT_ASCEND = false;
-    private boolean OBJECT_DECEND = false;
+    private boolean OBJECT_DESCEND = false;
     private boolean BANK_RIGHT = false;
     private boolean BANK_LEFT = false;
 
@@ -100,9 +100,9 @@ public class FlightSim extends Scene {
 	    gl.glRotatef(-0.25f, 1, 0, 0);
 	    OBJECT_ASCEND = false;
 	}
-	if (OBJECT_DECEND) {
+	if (OBJECT_DESCEND) {
 	    gl.glRotatef(0.25f, 1, 0, 0);
-	    OBJECT_DECEND = false;
+	    OBJECT_DESCEND = false;
 	}
 	if (TILT_RIGHT) {
 	    gl.glRotatef(0.25f, 0, 0, 1);
@@ -181,7 +181,7 @@ public class FlightSim extends Scene {
 	    OBJECT_ASCEND = true;
 	    break;
 	case KeyEvent.VK_I:
-	    OBJECT_DECEND = true;
+	    OBJECT_DESCEND = true;
 	    break;
 	case KeyEvent.VK_RIGHT:
 	    BANK_RIGHT = true;
