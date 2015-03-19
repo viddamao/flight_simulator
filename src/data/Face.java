@@ -11,10 +11,12 @@ public class Face {
 	
 	private ArrayList<Face> myAdjacentFaces;
 	private ArrayList<Vertex> myVertices;
+	private float[] myNormalVector;
 	
 	public Face() {
 		myAdjacentFaces = new ArrayList<Face>();
 		myVertices = new ArrayList<Vertex>();
+		myNormalVector = new float[3];
 	}
 
 	public void addAjacentFace(Face f) {
@@ -46,6 +48,10 @@ public class Face {
                  + (v2.Z - v3.Z) * (v2.X + v3.X) + (v3.Z - v0.Z) * (v3.X + v0.X);
         float nz = (v0.X - v1.X) * (v0.Y + v1.Y) + (v1.X - v2.X) * (v1.Y + v2.Y)
                  + (v2.X - v3.X) * (v2.Y + v3.Y) + (v3.X - v0.X) * (v3.Y + v0.Y);
+        
+        myNormalVector[0] = nx;
+        myNormalVector[1] = ny;
+        myNormalVector[2] = nz;
         
         gl.glNormal3f(nx, ny, nz);
 	}
