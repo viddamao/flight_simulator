@@ -7,6 +7,8 @@ import javax.swing.JOptionPane;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 
+import data.Face;
+
 import framework.JOGLFrame;
 import framework.Pixmap;
 import framework.Scene;
