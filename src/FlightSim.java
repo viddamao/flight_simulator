@@ -20,14 +20,14 @@ import framework.Scene;
  * @author Robert C. Duvall
  */
 public class FlightSim extends Scene {
-    
+
     private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
-    
+
     // camera controls state
     private static final float SPEED_INCREMENT = 0.02f;
-    private final float DEFAULT_FLIGHT_SPEED=0.01f;
+    private final float DEFAULT_FLIGHT_SPEED = 0.01f;
     private float FLIGHT_SPEED = 0.01f;
     private boolean TILT_RIGHT = false;
     private boolean TILT_LEFT = false;
@@ -197,28 +197,34 @@ public class FlightSim extends Scene {
 	    BANK_LEFT = true;
 	    break;
 	case KeyEvent.VK_R:
-	    FLIGHT_SPEED=DEFAULT_FLIGHT_SPEED;
-	    break;	    
+	    FLIGHT_SPEED = DEFAULT_FLIGHT_SPEED;
+	    break;
 	case KeyEvent.VK_Q:
-	    JOptionPane.showMessageDialog(null, "Thanks for using the FlightSim","Message", JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog(null,
+		    "Thanks for using the FlightSim", "Message",
+		    JOptionPane.INFORMATION_MESSAGE);
 	    System.exit(1);
 	    break;
 	}
     }
-    
+
     private void initTerrain(GL2 gl, GLU glu, GLUT glut) {
-    	int width = myHeightMap.getSize().width;
-    	int height = myHeightMap.getSize().height;
-    	for (int X = 0; X < width - 1; X++) {
-		for (int Y = 0; Y < width - 1; Y++) {
-			Face face = new Face();
-			face.addVertex(new Vertex((float) X, (float) Y, myHeightMap.getColor(X,Y).getRed()));
-			face.addVertex(new Vertex((float) X + 1, (float) Y, myHeightMap.getColor(X,Y).getRed()));
-			face.addVertex(new Vertex((float) X, (float) Y + 1, myHeightMap.getColor(X,Y).getRed()));
-			face.addVertex(new Vertex((float) X + 1, (float) Y + 1, myHeightMap.getColor(X,Y).getRed()));
-			face.printDiagnosticInfo();
-		}
-    	}
+	int width = myHeightMap.getSize().width;
+	int height = myHeightMap.getSize().height;
+	for (int X = 0; X < width - 1; X++) {
+	    for (int Y = 0; Y < width - 1; Y++) {
+		Face face = new Face();
+		face.addVertex(new Vertex((float) X, (float) Y, myHeightMap
+			.getColor(X, Y).getRed()));
+		face.addVertex(new Vertex((float) X + 1, (float) Y, myHeightMap
+			.getColor(X, Y).getRed()));
+		face.addVertex(new Vertex((float) X, (float) Y + 1, myHeightMap
+			.getColor(X, Y).getRed()));
+		face.addVertex(new Vertex((float) X + 1, (float) Y + 1,
+			myHeightMap.getColor(X, Y).getRed()));
+		// face.printDiagnosticInfo();
+	    }
+	}
     }
 
     private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
