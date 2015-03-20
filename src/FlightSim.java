@@ -1,5 +1,6 @@
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
@@ -9,7 +10,6 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import data.Face;
 import data.Vertex;
-
 import framework.JOGLFrame;
 import framework.Pixmap;
 import framework.Scene;
@@ -42,6 +42,7 @@ public class FlightSim extends Scene {
     private int myStepSize;
     private int myRenderMode;
     private boolean isCompiled;
+    private ArrayList<Face> myFaces;
     private Pixmap myHeightMap;
 
     public FlightSim(String[] args) {
@@ -65,6 +66,7 @@ public class FlightSim extends Scene {
 	myScale = 0.05f;
 	myStepSize = 1;
 	isCompiled = false;
+	myFaces = new ArrayList<Face>();
 	myRenderMode = GL2.GL_QUADS;
 	initTerrain(gl, glu, glut);
 	// make all normals unit length
@@ -237,13 +239,21 @@ public class FlightSim extends Scene {
 			    float z3 = z0;
 			    face.addVertex(new Vertex(x3, y3, z3));
 			    
+			    myFaces.add(face);
+			    
 				//face.printDiagnosticInfo();
 			}
     	}
     }
     
-    private void drawTerrain(GL2 gl, GLU glut, GLUT glut) {
-    	
+    private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
+    	gl.glBegin(myRenderMode); {
+	    	for (Face f : myFaces) {
+	    		f.calculateFaceNormal(gl, glu, glut);
+	    		f.drawFace(gl, glu, glut);
+	    	}
+    	}
+    	gl.glEnd();
     }
 
     /*private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
