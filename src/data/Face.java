@@ -58,5 +58,13 @@ public class Face {
         
         gl.glNormal3f(nx, ny, nz);
 	}
+	
+	public void printDiagnosticInfo() {
+		System.out.print("---------------------------------");
+		System.out.print("Added a new face with vertices:\n");
+		for (Vertex v : myVertices) {
+			System.out.printf("(%f, %f, %f)", v.getX(), v.getY(), v.getZ());
+		}
+	}
 
 }

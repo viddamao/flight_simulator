@@ -66,6 +66,7 @@ public class FlightSim extends Scene {
 	myStepSize = 16;
 	isCompiled = false;
 	myRenderMode = GL2.GL_QUADS;
+	initTerrain(gl, glu, glut);
 	// make all normals unit length
 	gl.glEnable(GL2.GL_NORMALIZE);
 	// interpolate color on objects across polygons
@@ -208,10 +209,14 @@ public class FlightSim extends Scene {
     private void initTerrain(GL2 gl, GLU glu, GLUT glut) {
     	int width = myHeightMap.getSize().width;
     	int height = myHeightMap.getSize().height;
-    	for (int X = 0; X < width; X++) {
-		for (int Y = 0; Y < width; Y++) {
+    	for (int X = 0; X < width - 1; X++) {
+		for (int Y = 0; Y < width - 1; Y++) {
 			Face face = new Face();
 			face.addVertex(new Vertex((float) X, (float) Y, myHeightMap.getColor(X,Y).getRed()));
+			face.addVertex(new Vertex((float) X + 1, (float) Y, myHeightMap.getColor(X,Y).getRed()));
+			face.addVertex(new Vertex((float) X, (float) Y + 1, myHeightMap.getColor(X,Y).getRed()));
+			face.addVertex(new Vertex((float) X + 1, (float) Y + 1, myHeightMap.getColor(X,Y).getRed()));
+			face.printDiagnosticInfo();
 		}
     	}
     }
