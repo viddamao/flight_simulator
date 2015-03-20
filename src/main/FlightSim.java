@@ -1,15 +1,21 @@
+package main;
+
+import java.awt.Frame;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.media.opengl.GL2;
+import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JOptionPane;
 
+import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import data.Face;
 import data.Vertex;
-
 import framework.JOGLFrame;
 import framework.Pixmap;
 import framework.Scene;
@@ -21,6 +27,8 @@ import framework.Scene;
  */
 public class FlightSim extends Scene {
     
+    private static JOGLFrame myFrame;
+    private static Scene myScene;
     private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
@@ -43,7 +51,8 @@ public class FlightSim extends Scene {
     private int myRenderMode;
     private boolean isCompiled;
     private Pixmap myHeightMap;
-
+    
+    
     public FlightSim(String[] args) {
 	super("Flight Simulator");
 	String name = (args.length > 1) ? args[0] : DEFAULT_MAP_FILE;
@@ -66,6 +75,8 @@ public class FlightSim extends Scene {
 	myStepSize = 1;
 	isCompiled = false;
 	myRenderMode = GL2.GL_QUADS;
+
+	createSkybox();
 	initTerrain(gl, glu, glut);
 	// make all normals unit length
 	gl.glEnable(GL2.GL_NORMALIZE);
@@ -73,11 +84,42 @@ public class FlightSim extends Scene {
 	gl.glShadeModel(GL2.GL_SMOOTH);
     }
 
+    private void createSkybox() {
+        GLCanvas canvas = new GLCanvas();
+ 
+        canvas.addGLEventListener(new Skybox());
+        myFrame.add(canvas);
+        myFrame.setSize(640, 480);
+        final Animator animator = new Animator(canvas);
+        myFrame.addWindowListener(new WindowAdapter() {
+ 
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Run this on another thread than the AWT event queue to
+                // make sure the call to Animator.stop() completes before
+                // exiting
+                new Thread(new Runnable() {
+ 
+                    public void run() {
+                        animator.stop();
+                        System.exit(0);
+                    }
+                }).start();
+            }
+        });
+        // Center frame
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setVisible(true);
+        animator.start();
+    
+    }
+
     /**
      * Draw all of the objects to display.
      */
     @Override
     public void display(GL2 gl, GLU glu, GLUT glut) {
+	
 	if (!isCompiled) {
 	    gl.glDeleteLists(TERRAIN_ID, 1);
 	    gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
@@ -242,11 +284,11 @@ public class FlightSim extends Scene {
     	}
     }
     
-    private void drawTerrain(GL2 gl, GLU glut, GLUT glut) {
+  // private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
     	
-    }
+ //   }
 
-    /*private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
+    private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
 	int width = myHeightMap.getSize().width;
 	int height = myHeightMap.getSize().height;
 	gl.glBegin(myRenderMode);
@@ -297,10 +339,12 @@ public class FlightSim extends Scene {
 	    }
 	}
 	gl.glEnd();
-    }*/
+    }
+    //*/
 
     // allow program to be run from here
     public static void main(String[] args) {
-	new JOGLFrame(new FlightSim(args));
+	myScene=new FlightSim(args);
+	myFrame=new JOGLFrame(myScene);
     }
 }
