@@ -60,10 +60,10 @@ public class Face {
 	}
 	
 	public void printDiagnosticInfo() {
-		System.out.print("---------------------------------");
+		System.out.print("---------------------------------\n");
 		System.out.print("Added a new face with vertices:\n");
 		for (Vertex v : myVertices) {
-			System.out.printf("(%f, %f, %f)", v.getX(), v.getY(), v.getZ());
+			System.out.printf("(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
 		}
 	}
 
