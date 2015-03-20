@@ -1,4 +1,7 @@
 package data;
+
+import data.Vertex;
+
 import java.util.ArrayList;
 
 import javax.media.opengl.GL2;
@@ -29,7 +32,7 @@ public class Face {
 	
 	public boolean hasVertex(Vertex v) {
 		for (Vertex t : myVertices) {
-			if (v.X == t.X && v.Y == t.Y && v.Z == t.Z) {
+			if (v.getX() == t.getX() && v.getY() == t.getY() && v.getZ() == t.getZ()) {
 				return true;
 			}
 		}
@@ -42,33 +45,18 @@ public class Face {
 		Vertex v2 = myVertices.get(2);
 		Vertex v3 = myVertices.get(3);
 		
-		float nx = (v0.Y - v1.Y) * (v0.Z + v1.Z) + (v1.Y - v2.Y) * (v1.Z + v2.Z)
-                 + (v2.Y - v3.Y) * (v2.Z + v3.Z) + (v3.Y - v0.Y) * (v3.Z + v0.Z);
-        float ny = (v0.Z - v1.Z) * (v0.X + v1.X) + (v1.Z - v2.Z) * (v1.X + v2.X)
-                 + (v2.Z - v3.Z) * (v2.X + v3.X) + (v3.Z - v0.Z) * (v3.X + v0.X);
-        float nz = (v0.X - v1.X) * (v0.Y + v1.Y) + (v1.X - v2.X) * (v1.Y + v2.Y)
-                 + (v2.X - v3.X) * (v2.Y + v3.Y) + (v3.X - v0.X) * (v3.Y + v0.Y);
+		float nx = (v0.getY() - v1.getY()) * (v0.getZ() + v1.getZ()) + (v1.getY() - v2.getY()) * (v1.getZ() + v2.getZ())
+                 + (v2.getY() - v3.getY()) * (v2.getZ() + v3.getZ()) + (v3.getY() - v0.getY()) * (v3.getZ() + v0.getZ());
+        float ny = (v0.getZ() - v1.getZ()) * (v0.getX() + v1.getX()) + (v1.getZ() - v2.getZ()) * (v1.getX() + v2.getX())
+                 + (v2.getZ() - v3.getZ()) * (v2.getX() + v3.getX()) + (v3.getZ() - v0.getZ()) * (v3.getX() + v0.getX());
+        float nz = (v0.getX() - v1.getX()) * (v0.getY() + v1.getY()) + (v1.getX() - v2.getX()) * (v1.getY() + v2.getY())
+                 + (v2.getX() - v3.getX()) * (v2.getY() + v3.getY()) + (v3.getX() - v0.getX()) * (v3.getY() + v0.getY());
         
         myNormalVector[0] = nx;
         myNormalVector[1] = ny;
         myNormalVector[2] = nz;
         
         gl.glNormal3f(nx, ny, nz);
-	}
-	
-	public class Vertex {
-		
-		private float X;
-		private float Y;
-		private float Z;
-		
-		public Vertex(float x, float y, float z) {
-			X = x;
-			Y = y;
-			Z = z;
-		}
-		
-		
 	}
 
 }

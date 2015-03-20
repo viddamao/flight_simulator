@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import data.Face;
+import data.Vertex;
 
 import framework.JOGLFrame;
 import framework.Pixmap;
@@ -19,10 +20,13 @@ import framework.Scene;
  * @author Robert C. Duvall
  */
 public class FlightSim extends Scene {
-    private static final float SPEED_INCREMENT = 0.02f;
+    
     private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
+    
+    // camera controls state
+    private static final float SPEED_INCREMENT = 0.02f;
     private final float DEFAULT_FLIGHT_SPEED=0.01f;
     private float FLIGHT_SPEED = 0.01f;
     private boolean TILT_RIGHT = false;
@@ -199,6 +203,17 @@ public class FlightSim extends Scene {
 	    System.exit(1);
 	    break;
 	}
+    }
+    
+    private void initTerrain(GL2 gl, GLU glu, GLUT glut) {
+    	int width = myHeightMap.getSize().width;
+    	int height = myHeightMap.getSize().height;
+    	for (int X = 0; X < width; X++) {
+		for (int Y = 0; Y < width; Y++) {
+			Face face = new Face();
+			face.addVertex(new Vertex((float) X, (float) Y, myHeightMap.getColor(X,Y).getRed()));
+		}
+    	}
     }
 
     private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
