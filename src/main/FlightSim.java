@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.awt.GLCanvas;
@@ -16,6 +17,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import data.Face;
 import data.Vertex;
+
 import framework.JOGLFrame;
 import framework.Pixmap;
 import framework.Scene;
@@ -50,6 +52,7 @@ public class FlightSim extends Scene {
     private int myStepSize;
     private int myRenderMode;
     private boolean isCompiled;
+    private ArrayList<Face> myFaces;
     private Pixmap myHeightMap;
     
     
@@ -74,6 +77,7 @@ public class FlightSim extends Scene {
 	myScale = 0.05f;
 	myStepSize = 1;
 	isCompiled = false;
+	myFaces = new ArrayList<Face>();
 	myRenderMode = GL2.GL_QUADS;
 
 	createSkybox();
@@ -279,66 +283,21 @@ public class FlightSim extends Scene {
 			    float z3 = z0;
 			    face.addVertex(new Vertex(x3, y3, z3));
 			    
+			    myFaces.add(face);
+			    
 				//face.printDiagnosticInfo();
 			}
     	}
     }
     
-  // private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
-    	
- //   }
-
     private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
-	int width = myHeightMap.getSize().width;
-	int height = myHeightMap.getSize().height;
-	gl.glBegin(myRenderMode);
-	{
-	    for (int X = 0; X < width; X += myStepSize) {
-		for (int Y = 0; Y < height; Y += myStepSize) {
-		    // set (x, y, z) value for bottom left vertex
-		    float x0 = X - width / 2.0f;
-		    float y0 = myHeightMap.getColor(X, Y).getRed();
-		    float z0 = Y - height / 2.0f;
-		    // set (x, y, z) value for top left vertex
-		    float x1 = x0;
-		    float y1 = myHeightMap.getColor(X, Y + myStepSize).getRed();
-		    float z1 = z0 + myStepSize;
-		    // set (x, y, z) value for top right vertex
-		    float x2 = x0 + myStepSize;
-		    float y2 = myHeightMap.getColor(X + myStepSize,
-			    Y + myStepSize).getRed();
-		    float z2 = z0 + myStepSize;
-		    // set (x, y, z) value for bottom right vertex
-		    float x3 = x0 + myStepSize;
-		    float y3 = myHeightMap.getColor(X + myStepSize, Y).getRed();
-		    float z3 = z0;
-		    // set normal vector for face
-		    float nx = (y0 - y1) * (z0 + z1) + (y1 - y2) * (z1 + z2)
-			    + (y2 - y3) * (z2 + z3) + (y3 - y0) * (z3 + z0);
-		    float ny = (z0 - z1) * (x0 + x1) + (z1 - z2) * (x1 + x2)
-			    + (z2 - z3) * (x2 + x3) + (z3 - z0) * (x3 + x0);
-		    float nz = (x0 - x1) * (y0 + y1) + (x1 - x2) * (y1 + y2)
-			    + (x2 - x3) * (y2 + y3) + (x3 - x0) * (y3 + y0);
-		    gl.glNormal3f(nx, ny, nz);
-		    // set vertices
-		    gl.glVertex3f(x0, y0, z0);
-		    gl.glVertex3f(x1, y1, z1);
-		    if (myRenderMode == GL2.GL_LINES) {
-			gl.glVertex3f(x1, y1, z1);
-		    }
-		    gl.glVertex3f(x2, y2, z2);
-		    if (myRenderMode == GL2.GL_LINES) {
-			gl.glVertex3f(x2, y2, z2);
-		    }
-		    gl.glVertex3f(x3, y3, z3);
-		    if (myRenderMode == GL2.GL_LINES) {
-			gl.glVertex3f(x3, y3, z3);
-			gl.glVertex3f(x0, y0, z0);
-		    }
-		}
-	    }
-	}
-	gl.glEnd();
+    	gl.glBegin(myRenderMode); {
+	    	for (Face f : myFaces) {
+	    		f.calculateFaceNormal(gl, glu, glut);
+	    		f.drawFace(gl, glu, glut);
+	    	}
+    	}
+    	gl.glEnd();
     }
     //*/
 
