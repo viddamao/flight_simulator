@@ -28,7 +28,7 @@ public class Skybox implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
 
 	GL2 gl = (GL2) drawable.getGL();
-	gl.glShadeModel(GL2.GL_SMOOTH); 
+	gl.glShadeModel(GL2.GL_SMOOTH);
 	try {
 	    GLProfile myProfile = drawable.getGLProfile();
 	    InputStream stream = getClass().getResourceAsStream(
@@ -58,7 +58,7 @@ public class Skybox implements GLEventListener {
 	GL2 gl = (GL2) drawable.getGL();
 	GLU glu = new GLU();
 
-	if (height <= 0) { 
+	if (height <= 0) {
 
 	    height = 1;
 	}
@@ -113,7 +113,7 @@ public class Skybox implements GLEventListener {
 	gl.glTexCoord2f(0, 1);
 	gl.glVertex3f(-0.5f, 0.5f, 0.5f);
 	gl.glEnd();
-	//back
+	// back
 	gl.glBegin(GL2.GL_QUADS);
 	gl.glTexCoord2f(0, 0);
 	gl.glVertex3f(-0.5f, -0.5f, -0.5f);
@@ -124,7 +124,7 @@ public class Skybox implements GLEventListener {
 	gl.glTexCoord2f(0, 1);
 	gl.glVertex3f(-0.5f, 0.5f, -0.5f);
 	gl.glEnd();
-	//up
+	// up
 	gl.glBegin(GL2.GL_QUADS);
 	gl.glTexCoord2f(0, 0);
 	gl.glVertex3f(-0.5f, -0.5f, -0.5f);
@@ -135,7 +135,7 @@ public class Skybox implements GLEventListener {
 	gl.glTexCoord2f(1, 0);
 	gl.glVertex3f(0.5f, -0.5f, -0.5f);
 	gl.glEnd();
-	//down
+	// down
 	gl.glBegin(GL2.GL_QUADS);
 	gl.glTexCoord2f(0, 1);
 	gl.glVertex3f(-0.5f, 0.5f, -0.5f);

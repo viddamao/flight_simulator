@@ -28,16 +28,16 @@ import framework.Scene;
  * @author Robert C. Duvall
  */
 public class FlightSim extends Scene {
-    
+
     private static JOGLFrame myFrame;
     private static Scene myScene;
     private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
     private final int TERRAIN_ID = 1;
-    
+
     // camera controls state
     private static final float SPEED_INCREMENT = 0.02f;
-    private final float DEFAULT_FLIGHT_SPEED=0.01f;
+    private final float DEFAULT_FLIGHT_SPEED = 0.01f;
     private float FLIGHT_SPEED = 0.01f;
     private boolean TILT_RIGHT = false;
     private boolean TILT_LEFT = false;
@@ -54,8 +54,7 @@ public class FlightSim extends Scene {
     private boolean isCompiled;
     private ArrayList<Face> myFaces;
     private Pixmap myHeightMap;
-    
-    
+
     public FlightSim(String[] args) {
 	super("Flight Simulator");
 	String name = (args.length > 1) ? args[0] : DEFAULT_MAP_FILE;
@@ -89,33 +88,32 @@ public class FlightSim extends Scene {
     }
 
     private void createSkybox() {
-        GLCanvas canvas = new GLCanvas();
- 
-        canvas.addGLEventListener(new Skybox());
-        myFrame.add(canvas);
-        myFrame.setSize(640, 480);
-        final Animator animator = new Animator(canvas);
-        myFrame.addWindowListener(new WindowAdapter() {
- 
-            @Override
-            public void windowClosing(WindowEvent e) {
-                // Run this on another thread than the AWT event queue to
-                // make sure the call to Animator.stop() completes before
-                // exiting
-                new Thread(new Runnable() {
- 
-                    public void run() {
-                        animator.stop();
-                        System.exit(0);
-                    }
-                }).start();
-            }
-        });
-        // Center frame
-        myFrame.setLocationRelativeTo(null);
-        myFrame.setVisible(true);
-        animator.start();
-    
+	GLCanvas canvas = new GLCanvas();
+	canvas.addGLEventListener(new Skybox());
+	myFrame.add(canvas);
+	myFrame.setSize(640, 480);
+	final Animator animator = new Animator(canvas);
+	myFrame.addWindowListener(new WindowAdapter() {
+
+	    @Override
+	    public void windowClosing(WindowEvent e) {
+		// Run this on another thread than the AWT event queue to
+		// make sure the call to Animator.stop() completes before
+		// exiting
+		new Thread(new Runnable() {
+
+		    public void run() {
+			animator.stop();
+			System.exit(0);
+		    }
+		}).start();
+	    }
+	});
+	// Center frame
+	myFrame.setLocationRelativeTo(null);
+	myFrame.setVisible(true);
+	animator.start();
+
     }
 
     /**
@@ -123,7 +121,7 @@ public class FlightSim extends Scene {
      */
     @Override
     public void display(GL2 gl, GLU glu, GLUT glut) {
-	
+
 	if (!isCompiled) {
 	    gl.glDeleteLists(TERRAIN_ID, 1);
 	    gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
@@ -243,67 +241,72 @@ public class FlightSim extends Scene {
 	    BANK_LEFT = true;
 	    break;
 	case KeyEvent.VK_R:
-	    FLIGHT_SPEED=DEFAULT_FLIGHT_SPEED;
-	    break;	    
+	    FLIGHT_SPEED = DEFAULT_FLIGHT_SPEED;
+	    break;
 	case KeyEvent.VK_Q:
-	    JOptionPane.showMessageDialog(null, "Thanks for using the FlightSim","Message", JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog(null,
+		    "Thanks for using the FlightSim", "Message",
+		    JOptionPane.INFORMATION_MESSAGE);
 	    System.exit(1);
 	    break;
 	}
     }
-    
+
     private void initTerrain(GL2 gl, GLU glu, GLUT glut) {
-    	int width = myHeightMap.getSize().width;
-    	int height = myHeightMap.getSize().height;
-    	for (int X = 0; X < width - myStepSize; X++) {
-			for (int Y = 0; Y < width - myStepSize; Y++) {
-				Face face = new Face();
-			    
-				// set (x, y, z) value for bottom left vertex
-			    float x0 = X - width / 2.0f;
-			    float y0 = myHeightMap.getColor(X, Y).getRed();
-			    float z0 = Y - height / 2.0f;
-			    face.addVertex(new Vertex(x0, y0, z0));
-			    
-			    // set (x, y, z) value for top left vertex
-			    float x1 = x0;
-			    float y1 = myHeightMap.getColor(X, Y + myStepSize).getRed();
-			    float z1 = z0 + myStepSize;
-			    face.addVertex(new Vertex(x1, y1, z1));
-			    
-			    // set (x, y, z) value for top right vertex
-			    float x2 = x0 + myStepSize;
-			    float y2 = myHeightMap.getColor(X + myStepSize,Y + myStepSize).getRed();
-			    float z2 = z0 + myStepSize;
-			    face.addVertex(new Vertex(x2, y2, z2));
-			    
-			    // set (x, y, z) value for bottom right vertex
-			    float x3 = x0 + myStepSize;
-			    float y3 = myHeightMap.getColor(X + myStepSize, Y).getRed();
-			    float z3 = z0;
-			    face.addVertex(new Vertex(x3, y3, z3));
-			    
-			    myFaces.add(face);
-			    
-				//face.printDiagnosticInfo();
-			}
-    	}
+	int width = myHeightMap.getSize().width;
+	int height = myHeightMap.getSize().height;
+	for (int X = 0; X < width - myStepSize; X++) {
+	    for (int Y = 0; Y < width - myStepSize; Y++) {
+		Face face = new Face();
+
+		// set (x, y, z) value for bottom left vertex
+		float x0 = X - width / 2.0f;
+		float y0 = myHeightMap.getColor(X, Y).getRed();
+		float z0 = Y - height / 2.0f;
+		face.addVertex(new Vertex(x0, y0, z0));
+
+		// set (x, y, z) value for top left vertex
+		float x1 = x0;
+		float y1 = myHeightMap.getColor(X, Y + myStepSize).getRed();
+		float z1 = z0 + myStepSize;
+		face.addVertex(new Vertex(x1, y1, z1));
+
+		// set (x, y, z) value for top right vertex
+		float x2 = x0 + myStepSize;
+		float y2 = myHeightMap.getColor(X + myStepSize, Y + myStepSize)
+			.getRed();
+		float z2 = z0 + myStepSize;
+		face.addVertex(new Vertex(x2, y2, z2));
+
+		// set (x, y, z) value for bottom right vertex
+		float x3 = x0 + myStepSize;
+		float y3 = myHeightMap.getColor(X + myStepSize, Y).getRed();
+		float z3 = z0;
+		face.addVertex(new Vertex(x3, y3, z3));
+
+		myFaces.add(face);
+
+		// face.printDiagnosticInfo();
+	    }
+	}
     }
-    
+
     private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
-    	gl.glBegin(myRenderMode); {
-	    	for (Face f : myFaces) {
-	    		f.calculateFaceNormal(gl, glu, glut);
-	    		f.drawFace(gl, glu, glut);
-	    	}
-    	}
-    	gl.glEnd();
+	gl.glBegin(myRenderMode);
+	{
+	    for (Face f : myFaces) {
+		f.calculateFaceNormal(gl, glu, glut);
+		f.drawFace(gl, glu, glut);
+	    }
+	}
+	gl.glEnd();
     }
-    //*/
+
+    // */
 
     // allow program to be run from here
     public static void main(String[] args) {
-	myScene=new FlightSim(args);
-	myFrame=new JOGLFrame(myScene);
+	myScene = new FlightSim(args);
+	myFrame = new JOGLFrame(myScene);
     }
 }
