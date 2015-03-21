@@ -1,39 +1,45 @@
 package data;
 
+import java.util.ArrayList;
+
+import javax.media.opengl.GL2;
+import javax.media.opengl.glu.GLU;
+
+import com.jogamp.opengl.util.gl2.GLUT;
+
 public class Vertex {
 
-    private float X;
-    private float Y;
-    private float Z;
+	private float X;
+	private float Y;
+	private float Z;
 
-    public Vertex(float x, float y, float z) {
-	setX(x);
-	setY(y);
-	setZ(z);
-    }
+	public Vertex(float x, float y, float z) {
+		setX(x);
+		setY(y);
+		setZ(z);
+	}
 
-    public float getX() {
-	return X;
-    }
+	public float getX() {
+		return X;
+	}
 
-    public void setX(float x) {
-	X = x;
-    }
+	public void setX(float x) {
+		X = x;
+	}
 
-    public float getY() {
-	return Y;
-    }
+	public float getY() {
+		return Y;
+	}
 
-    public void setY(float y) {
-	Y = y;
-    }
+	public void setY(float y) {
+		Y = y;
+	}
 
-    public float getZ() {
-	return Z;
-    }
+	public float getZ() {
+		return Z;
+	}
 
-    public void setZ(float z) {
-	Z = z;
-    }
-
+	public void setZ(float z) {
+		Z = z;
+	}
 }

@@ -3,6 +3,7 @@ package data;
 import data.Vertex;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
@@ -14,16 +15,18 @@ public class Face {
 	
 	private ArrayList<Face> myAdjacentFaces;
 	private ArrayList<Vertex> myVertices;
-	private float[] myNormalVector;
+	private float[] myFaceNormal;
 	
 	public Face() {
 		myAdjacentFaces = new ArrayList<Face>();
 		myVertices = new ArrayList<Vertex>();
-		myNormalVector = new float[3];
+		myFaceNormal = new float[3];
 	}
 
 	public void addAjacentFace(Face f) {
-		myAdjacentFaces.add(f);
+		if (f != null) {
+			myAdjacentFaces.add(f);
+		}
 	}
 	
 	public void addVertex(Vertex v) {
@@ -32,14 +35,14 @@ public class Face {
 	
 	public boolean hasVertex(Vertex v) {
 		for (Vertex t : myVertices) {
-			if (v.getX() == t.getX() && v.getY() == t.getY() && v.getZ() == t.getZ()) {
+			if ((int) v.getX() == (int) t.getX() && (int) v.getY() == (int) t.getY()) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public void calculateFaceNormal(GL2 gl, GLU glu, GLUT glut) {
+	public float[] calculateFaceNormal(GL2 gl, GLU glu, GLUT glut) {
 		Vertex v0 = myVertices.get(0);
 		Vertex v1 = myVertices.get(1);
 		Vertex v2 = myVertices.get(2);
@@ -52,22 +55,23 @@ public class Face {
         float nz = (v0.getX() - v1.getX()) * (v0.getY() + v1.getY()) + (v1.getX() - v2.getX()) * (v1.getY() + v2.getY())
                  + (v2.getX() - v3.getX()) * (v2.getY() + v3.getY()) + (v3.getX() - v0.getX()) * (v3.getY() + v0.getY());
         
-        myNormalVector[0] = nx;
-        myNormalVector[1] = ny;
-        myNormalVector[2] = nz;
+        myFaceNormal[0] = nx;
+        myFaceNormal[1] = ny;
+        myFaceNormal[2] = nz;
+       
+        return myFaceNormal;
         
-        gl.glNormal3f(nx, ny, nz);
 	}
 	
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
 		for (Vertex v : myVertices) {
-			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
+			
 		}
 	}
 	
 	public void printDiagnosticInfo() {
 		System.out.print("---------------------------------\n");
-		System.out.print("Added a new face with vertices:\n");
+		System.out.print("Face with vertices:\n");
 		for (Vertex v : myVertices) {
 			System.out.printf("(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
 		}
