@@ -77,9 +77,7 @@ public class Skybox implements GLEventListener {
 	gl.glPushMatrix();
 	// Reset and transform the matrix.
 	gl.glLoadIdentity();
-	glu.gluLookAt(0, 0, 1, // from position
-		0, 0, 0, // to position
-		0, 1, 0); // up direction
+	glu.gluLookAt(1, 2, 0, 0, 0, 0, 0, 1, 0);
 	// Enable/Disable features
 	gl.glPushAttrib(GL2.GL_ENABLE_BIT);
 	gl.glEnable(GL.GL_TEXTURE_2D);

@@ -10,6 +10,7 @@ public class Terrain {
 	private static Terrain _TERRAIN;
 	private Pixmap myHeightMap;
 	private List<List<Face>> myFaces;
+	private List<List<Vertex>> myVertices;
 	private int myStepSize;
 
 	protected Terrain() {}
@@ -25,56 +26,93 @@ public class Terrain {
 		myHeightMap = map;
 		myStepSize = step;
 		myFaces = new ArrayList<List<Face>>();
+		myVertices = new ArrayList<List<Vertex>>();
 	}
 
 	public void build() {
 		int width = myHeightMap.getSize().width;
 		int height = myHeightMap.getSize().height;
-		for (int X = 0; X < width - myStepSize; X += myStepSize) {
-			List<Face> row = new ArrayList<Face>();
-			myFaces.add(row);
-			for (int Y = 0; Y < width - myStepSize; Y+= myStepSize) {
-				Face face = new Face();
-
-				// set (x, y, z) value for bottom left vertex
-				float x0 = X - width / 2.0f;
-				float y0 = myHeightMap.getColor(X, Y).getRed();
-				float z0 = Y - height / 2.0f;
-
-				// set (x, y, z) value for top left vertex
-				float x1 = x0;
-				float y1 = myHeightMap.getColor(X, Y + myStepSize).getRed();
-				float z1 = z0 + myStepSize;
-
-				// set (x, y, z) value for top right vertex
-				float x2 = x0 + myStepSize;
-				float y2 = myHeightMap.getColor(X + myStepSize, Y + myStepSize)
-						.getRed();
-				float z2 = z0 + myStepSize;
-
-				// set (x, y, z) value for bottom right vertex
-				float x3 = x0 + myStepSize;
-				float y3 = myHeightMap.getColor(X + myStepSize, Y).getRed();
-				float z3 = z0;
-
-				Vertex v0 = new Vertex(x0, z0, y0);
-				Vertex v1 = new Vertex(x1, z1, y1);
-				Vertex v2 = new Vertex(x2, z2, y2);
-				Vertex v3 = new Vertex(x3, z3, y3);
-
-				face.addVertex(v0);
-				face.addVertex(v1);
-				face.addVertex(v2);
-				face.addVertex(v3);
-
-				row.add(face);
-			}
-			myFaces.add(row);
-		}
+		buildVertexMap(width, height);
+		buildFaceMap(width, height);
 	}
+	
+	private void buildVertexMap(int width, int height) {
+		
+		int col = -1;
+		int row = -1;
+		
+		for (int X = 0; X < width; X += myStepSize) {
+			
+			row++;
+			
+			List<Vertex> vCol = new ArrayList<Vertex>();
+			
+			for (int Y = 0; Y < height; Y+= myStepSize) {
+				
+				col++;
+				
+				float x = X - width / 2.0f;
+				float y = Y - height / 2.0f;
+				float z = myHeightMap.getColor(X, Y).getRed();
+				Vertex v = new Vertex(x, y, z);
+				
+				v.setCol(col);
+				v.setRow(row);
+				
+				vCol.add(v);
+			}
+			myVertices.add(vCol);
+		}
+		System.out.print("Vertex map is " + myVertices.size() + " columns by " + myVertices.get(0).size() + " rows.\n");
+	}
+	
+	private void buildFaceMap(int width, int height) {
+		for (int X = 0; X < myVertices.size() -  1; X++) {
+			List<Face> fCol = new ArrayList<Face>();
+			for (int Y = 0; Y < myVertices.get(0).size() - 1; Y++) {
+				Face face = new Face();
+				
+				boolean inBoundsX = (X+1 < myVertices.size());
+				boolean inBoundsY = (Y+1 < myVertices.get(0).size());
+				
+				if (inBoundsX && inBoundsY) {				
+					face.addVertex(myVertices.get(X).get(Y));
+					face.addVertex(myVertices.get(X+1).get(Y));
+					face.addVertex(myVertices.get(X+1).get(Y+1));
+					face.addVertex(myVertices.get(X).get(Y+1));	
+				}
+				fCol.add(face);
+			}
+			myFaces.add(fCol);
+		}
+		System.out.print("Face map is " + myFaces.size() + " columns by " + myFaces.get(0).size() + " rows.\n");
+	}
+	
+	public ArrayList<Face> vfQuery(Vertex v) {
 
-	public void setStepSize(int step) {
-		myStepSize = step;
+		ArrayList<Face> adjacentFaces = new ArrayList<Face>();
+		
+		int c = v.getCol();
+		int r = v.getRow();
+		
+		System.out.print("vfQuery for point: (" + c + ", " + r + ")\n");
+		
+		if (c >= 0 && c < myFaces.size() && r >=0 && r < myFaces.get(0).size()) {
+			adjacentFaces.add(myFaces.get(c).get(r));
+		}
+		if (c-1 >= 0 && c-1 < myFaces.size() && r >=0 && r < myFaces.get(0).size()) {
+			adjacentFaces.add(myFaces.get(c-1).get(r));
+		}	
+		if (c-1 >= 0 && c-1 < myFaces.size() && r-1 >=0 && r-1 < myFaces.get(0).size()) {
+			adjacentFaces.add(myFaces.get(c-1).get(r-1));
+		}
+		if (c >= 0 && c < myFaces.size() && r-1 >=0 && r-1 < myFaces.get(0).size()) {
+			adjacentFaces.add(myFaces.get(c).get(r-1));
+		}
+		
+		System.out.print("vfQuery returned " + adjacentFaces.size() + " adjacent faces.\n");
+		return adjacentFaces;
+
 	}
 	
 	public List<List<Face>> getFaces() {
