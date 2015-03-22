@@ -222,11 +222,11 @@ public class FlightSim extends Scene {
 	private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
 		gl.glBegin(myRenderMode);
 		{
-			/*for (List<Face> faces : myTerrain.getFaces()) {
+			for (List<Face> faces : myTerrain.getFaces()) {
 				for (Face f : faces) {
 					f.drawFace(gl, glu, glut);
 				}
-			}*/
+			}
 		}
 		gl.glEnd();
 	}

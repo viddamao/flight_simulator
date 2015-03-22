@@ -19,6 +19,8 @@ public class Face implements Comparable {
 	private ArrayList<Face> myAdjacentFaces;
 	private ArrayList<Vertex> myVertices;
 	private float[] myFaceNormal;
+	private int myCol;
+	private int myRow;
 	private Vertex myAnchor;
 	
 	public Face() {
@@ -75,69 +77,17 @@ public class Face implements Comparable {
        
         return myFaceNormal;
 	}
-	
-	public void buildVertexAdjacencies() {
-			myAnchor.addSharedFace(this);
-			for (Face f : myAdjacentFaces) {
-				myAnchor.addSharedFace(f);
-			}
-			/*
-			// Poll the queue for the next face to examine.
-			Face adj = q.poll();
-			// If we got a face...
-			if(adj != null) { 
-				// If it has the vertex we're looking for...
-				if (adj.hasVertex(v)) {
-					// ...and if we haven't already added this to our list of faces...
-					if(!v.getAdjacentFaces().contains(adj)) {
-						// ...add the shared face.
-						v.addSharedFace(adj);
-						// Then, for all of the faces touching that face...
-						for (Face f : adj.myAdjacentFaces) {
-							// ...if we haven't already added it to our queue...
-							if (!q.contains(f)) {
-								// add the 
-								q.add(f);
-							}
-						}
-					}
-				}
-				buildVertexAdjacencies(q, v);
-			}
-			*/
 
-	}
 	
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
-		
-			Collections.sort(myVertices);
-			float[] normal = myAnchor.getVertexNormal(gl, glu, glut);
+		System.out.print("--------------\nDRAWING FACE:\n");
+		for (Vertex v : myVertices) {
+			float[] normal = v.getVertexNormal(gl, glu, glut);
+			System.out.printf("Normal: {%f, %f, %f} — ", normal[0], normal[1], normal[2]);
 			gl.glNormal3f(normal[0], normal[1], normal[2]);
-			gl.glVertex3f(myAnchor.getX(), myAnchor.getY(), myAnchor.getZ());
-		
-			/*for (Vertex v : myVertices) {
-			
-			v.addSharedFace(this);
-			
-			Queue<Face> seed = new PriorityQueue<Face>();
-			for (Face f : myAdjacentFaces) {
-				seed.add(f);
-			}
-			
-			buildVertexAdjacencies(seed, myAnchor);
-			
-			float[] normal = new float[3];
-			for (Face f : v.getAdjacentFaces()) {
-				float[] fNormal = f.calculateFaceNormal(gl, glu, glut);
-				normal[0] += fNormal[0];
-				normal[1] += fNormal[1];
-				normal[2] += fNormal[2];
-			}
-			
-			gl.glNormal3f(normal[0]/4, normal[1]/4, normal[2]/4);
-			//System.out.printf("Drawing vertex (%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
+			System.out.printf("Coordinates: (%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
 			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
-		}*/
+		}
 	}
 	
 	public float[] normalize(float[] normal) {
@@ -147,14 +97,6 @@ public class Face implements Comparable {
 		result[1] = normal[1]/length;
 		result[2] = normal[2]/length;
 		return result;
-	}
-	
-	public void printDiagnosticInfo() {
-		System.out.print("---------------------------------\n");
-		System.out.print("Adjacent with vertices:\n");
-		for (Vertex v : myVertices) {
-			System.out.printf("(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
-		}
 	}
 
 	public int compareTo(Object o) {
@@ -176,6 +118,26 @@ public class Face implements Comparable {
 				return 0;
 			}
 		}
+	}
+
+	public int getMyCol() {
+		return myCol;
+	}
+
+	public void setMyCol(int myCol) {
+		this.myCol = myCol;
+	}
+
+	public int getMyRow() {
+		return myRow;
+	}
+
+	public void setMyRow(int myRow) {
+		this.myRow = myRow;
+	}
+	
+	public ArrayList<Vertex> getMyVertices() {
+		return myVertices;
 	}
 
 }

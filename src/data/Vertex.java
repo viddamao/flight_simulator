@@ -13,6 +13,8 @@ public class Vertex implements Comparable {
 	private float X;
 	private float Y;
 	private float Z;
+	private int col;
+	private int row;
 	private ArrayList<Face> myAdjacentFaces;
 	private float[] myVertexNormal;
 
@@ -22,6 +24,18 @@ public class Vertex implements Comparable {
 		setZ(z);
 		setAdjacentFaces(new ArrayList<Face>());
 		myVertexNormal = new float[3];
+	}
+	
+	public float[] getVertexNormal(GL2 gl, GLU glu, GLUT glut) {
+		float[] result = new float[3];
+		ArrayList<Face> adjacentFaces = Terrain.getTerrain().vfQuery(this);
+		for (Face f : adjacentFaces) {
+			float[] normal = f.calculateFaceNormal(gl, glu, glut);
+			result[0] += normal[0];
+			result[1] += normal[1];
+			result[2] += normal[2];
+		}
+		return result;
 	}
 
 	public float getX() {
@@ -61,6 +75,22 @@ public class Vertex implements Comparable {
 		this.myAdjacentFaces = myAdjacentFaces;
 	}
 
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
+	}
+	
 	public int compareTo(Object o) {
 		Vertex v = (Vertex) o;
 		if (this.getY() < v.getY()) {
@@ -82,16 +112,8 @@ public class Vertex implements Comparable {
 		}
 	}
 	
-	public float[] getVertexNormal(GL2 gl, GLU glu, GLUT glut) {
-		float[] normal = new float[3];
-		for (Face f : myAdjacentFaces) {
-			float[] fNormal = f.calculateFaceNormal(gl, glu, glut);
-			normal[0] += fNormal[0];
-			normal[1] += fNormal[1];
-			normal[2] += fNormal[2];
-		}
-		myVertexNormal = normal;
-		return myVertexNormal;
+	public String printCoordinates() {
+		return "(" + col + "," + row + ") : {" + X + "," + Y + "," + Z + "}\n";
 	}
 
 }
