@@ -32,7 +32,7 @@ public class Vertex implements Comparable {
 		for (Face f : adjacentFaces) {
 			float[] normal = f.calculateFaceNormal(gl, glu, glut);
 			result[0] += normal[0];
-			result[1] += normal[1];
+			result[1] += normal[2];
 			result[2] += normal[2];
 		}
 		return result;

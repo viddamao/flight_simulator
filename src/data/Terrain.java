@@ -39,22 +39,22 @@ public class Terrain {
 	private void buildVertexMap(int width, int height) {
 		
 		int col = -1;
-		int row = -1;
 		
 		for (int X = 0; X < width; X += myStepSize) {
 			
-			row++;
+			col++;
+			int row = -1;
 			
 			List<Vertex> vCol = new ArrayList<Vertex>();
 			
 			for (int Y = 0; Y < height; Y+= myStepSize) {
 				
-				col++;
+				row++;
 				
 				float x = X - width / 2.0f;
 				float y = Y - height / 2.0f;
 				float z = myHeightMap.getColor(X, Y).getRed();
-				Vertex v = new Vertex(x, y, z);
+				Vertex v = new Vertex(x, z, y);
 				
 				v.setCol(col);
 				v.setRow(row);
@@ -62,6 +62,9 @@ public class Terrain {
 				vCol.add(v);
 			}
 			myVertices.add(vCol);
+		}
+		for (List<Vertex> vertices : myVertices) {
+			System.out.print(vertices.size());
 		}
 		System.out.print("Vertex map is " + myVertices.size() + " columns by " + myVertices.get(0).size() + " rows.\n");
 	}
@@ -95,7 +98,7 @@ public class Terrain {
 		int c = v.getCol();
 		int r = v.getRow();
 		
-		System.out.print("vfQuery for point: (" + c + ", " + r + ")\n");
+		//System.out.print("vfQuery for point: (" + c + ", " + r + ")\n");
 		
 		if (c >= 0 && c < myFaces.size() && r >=0 && r < myFaces.get(0).size()) {
 			adjacentFaces.add(myFaces.get(c).get(r));
@@ -110,7 +113,7 @@ public class Terrain {
 			adjacentFaces.add(myFaces.get(c).get(r-1));
 		}
 		
-		System.out.print("vfQuery returned " + adjacentFaces.size() + " adjacent faces.\n");
+		//System.out.print("vfQuery returned " + adjacentFaces.size() + " adjacent faces.\n");
 		return adjacentFaces;
 
 	}
