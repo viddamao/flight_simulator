@@ -84,7 +84,7 @@ public class FlightSim extends Scene {
 	myRenderMode = GL2.GL_QUADS;
 	myAngle = -25.0f;
 	myScale = 0.05f;
-	myStepSize = 16;
+	myStepSize = 1;
 	isCompiled = false;
 	
 	myRenderMode = GL2.GL_QUADS;
@@ -211,7 +211,7 @@ public class FlightSim extends Scene {
 	public void setCamera(GL2 gl, GLU glu, GLUT glut) {
 		glu.gluLookAt(0, 7, -33, // from position
 				0, 5, 20, // to position
-				0, 1, 0); // up direction
+				0, 0, 1); // up direction
 	}
 
 	/**

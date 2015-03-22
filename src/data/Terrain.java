@@ -38,24 +38,23 @@ public class Terrain {
 	
 	private void buildVertexMap(int width, int height) {
 		
-		int row = -1;
+		int col = -1;
 		
 		for (int X = 0; X < width; X += myStepSize) {
-		
-		    
-			row++;
-
-			int col = -1;
+			
+			col++;
+			int row = -1;
+			
 			List<Vertex> vCol = new ArrayList<Vertex>();
 			
 			for (int Y = 0; Y < height; Y+= myStepSize) {
 				
-				col++;
+				row++;
 				
 				float x = X - width / 2.0f;
 				float y = Y - height / 2.0f;
 				float z = myHeightMap.getColor(X, Y).getRed();
-				Vertex v = new Vertex(x, y, z);
+				Vertex v = new Vertex(x, z, y);
 				
 				v.setCol(col);
 				v.setRow(row);
@@ -63,6 +62,9 @@ public class Terrain {
 				vCol.add(v);
 			}
 			myVertices.add(vCol);
+		}
+		for (List<Vertex> vertices : myVertices) {
+			System.out.print(vertices.size());
 		}
 		System.out.print("Vertex map is " + myVertices.size() + " columns by " + myVertices.get(0).size() + " rows.\n");
 	}
