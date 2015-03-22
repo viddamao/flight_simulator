@@ -167,8 +167,19 @@ public class FlightSim extends Scene {
 	 */
 	@Override
 	public void animate(GL2 gl, GLU glu, GLUT glut) {
-		gl.glTranslatef(0, 0, FLIGHT_SPEED);
-		if (BANK_RIGHT) {
+	    if (!INIT_DONE){
+	        gl.glPushMatrix();
+	        INIT_DONE=true;
+	    }
+	    gl.glTranslatef(0, 0, FLIGHT_SPEED);
+	    if (RESET_VIEW) {
+	        gl.glPopMatrix();
+	        RESET_VIEW = false;
+	        INIT_DONE=false;
+	        
+	    }
+
+	    	if (BANK_RIGHT) {
 			gl.glRotatef(0.25f, 0, 1, 0);
 			BANK_RIGHT = false;
 		}
@@ -270,6 +281,7 @@ public class FlightSim extends Scene {
 			BANK_LEFT = true;
 			break;
 		case KeyEvent.VK_R:
+		    	RESET_VIEW=true;
 			FLIGHT_SPEED = DEFAULT_FLIGHT_SPEED;
 			break;
 		case KeyEvent.VK_Q:
