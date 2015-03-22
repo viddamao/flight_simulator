@@ -50,7 +50,9 @@ public class FlightSim extends Scene {
     private boolean OBJECT_DESCEND = false;
     private boolean BANK_RIGHT = false;
     private boolean BANK_LEFT = false;
-
+    private boolean RESET_VIEW=false;
+    private boolean INIT_DONE=false;
+    
     // animation state
     private float myAngle;
     private float myScale;
@@ -59,8 +61,6 @@ public class FlightSim extends Scene {
     private boolean isCompiled;
     private ArrayList<Face> myFaces;
     private Pixmap myHeightMap;
-    private boolean RESET_VIEW=false;
-    private boolean INIT_DONE=false;
     
     
     public FlightSim(String[] args) {
@@ -87,7 +87,7 @@ public class FlightSim extends Scene {
 	myFaces = new ArrayList<Face>();
 	myRenderMode = GL2.GL_QUADS;
 
-	createSkybox();
+	//createSkybox();
 	initTerrain(gl, glu, glut);
 	// make all normals unit length
 	gl.glEnable(GL2.GL_NORMALIZE);
@@ -132,7 +132,6 @@ public class FlightSim extends Scene {
 	    gl.glDeleteLists(TERRAIN_ID, 1);
 	    gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
 	    drawTerrain(gl, glu, glut);
-	    
 	    gl.glEndList();
 	    isCompiled = true;
 	}
@@ -145,16 +144,15 @@ public class FlightSim extends Scene {
      */
     @Override
     public void animate(GL2 gl, GLU glu, GLUT glut) {
-	if (!INIT_DONE){
+	/*if (!INIT_DONE){
 	    gl.glPushMatrix();
 	    INIT_DONE=true;
-	}
+	}*/
 	gl.glTranslatef(0, 0, FLIGHT_SPEED);
 	if (RESET_VIEW) {
 	    gl.glPopMatrix();
 	    RESET_VIEW = false;
-	    INIT_DONE=false;
-		
+	    INIT_DONE=false;	
 	}
 	if (BANK_RIGHT) {
 	    gl.glRotatef(0.25f, 0, 1, 0);
@@ -272,7 +270,7 @@ public class FlightSim extends Scene {
     	int width = myHeightMap.getSize().width;
     	int height = myHeightMap.getSize().height;
     	for (int X = 0; X < width - myStepSize; X++) {
-			for (int Y = 0; Y < width - myStepSize; Y++) {
+			for (int Y = 0; Y < (width - myStepSize); Y++) {
 				Face face = new Face();
 			    
 				// set (x, y, z) value for bottom left vertex
@@ -303,6 +301,40 @@ public class FlightSim extends Scene {
 			    
 				//face.printDiagnosticInfo();
 			}
+			/*myStepSize*=4;
+			for (int Y = (height - myStepSize)/2;Y<height - myStepSize; Y++) {
+				Face face = new Face();
+			    
+				// set (x, y, z) value for bottom left vertex
+			    float x0 = X - width / 2.0f;
+			    float y0 = myHeightMap.getColor(X, Y).getRed();
+			    float z0 = Y - height / 2.0f;
+			    face.addVertex(new Vertex(x0, y0, z0));
+			    
+			    // set (x, y, z) value for top left vertex
+			    float x1 = x0;
+			    float y1 = myHeightMap.getColor(X, Y + myStepSize).getRed();
+			    float z1 = z0 + myStepSize;
+			    face.addVertex(new Vertex(x1, y1, z1));
+			    
+			    // set (x, y, z) value for top right vertex
+			    float x2 = x0 + myStepSize;
+			    float y2 = myHeightMap.getColor(X + myStepSize,Y + myStepSize).getRed();
+			    float z2 = z0 + myStepSize;
+			    face.addVertex(new Vertex(x2, y2, z2));
+			    
+			    // set (x, y, z) value for bottom right vertex
+			    float x3 = x0 + myStepSize;
+			    float y3 = myHeightMap.getColor(X + myStepSize, Y).getRed();
+			    float z3 = z0;
+			    face.addVertex(new Vertex(x3, y3, z3));
+			    
+			    myFaces.add(face);
+			    
+				//face.printDiagnosticInfo();
+			}
+
+			myStepSize/=4;*/
     	}
     }
     
