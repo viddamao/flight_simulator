@@ -3,6 +3,7 @@ package data;
 import data.Vertex;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -46,9 +47,9 @@ public class Face implements Comparable {
 	
 	public boolean hasVertex(Vertex v) {
 		for (Vertex t : myVertices) {
-			//System.out.printf("V:(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
-			//System.out.printf("T:(%f, %f, %f)\n", t.getX(), t.getY(), t.getZ());
 			if (v.getX() == t.getX() && v.getY() == t.getY() && v.getZ() == t.getZ()) {
+				System.out.printf("V:(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
+				System.out.printf("T:(%f, %f, %f)\n", t.getX(), t.getY(), t.getZ());
 				return true;
 			}
 		}
@@ -75,7 +76,12 @@ public class Face implements Comparable {
         return myFaceNormal;
 	}
 	
-	public void buildVertexAdjacencies(PriorityQueue<Face> q, Vertex v) {
+	public void buildVertexAdjacencies() {
+			myAnchor.addSharedFace(this);
+			for (Face f : myAdjacentFaces) {
+				myAnchor.addSharedFace(f);
+			}
+			/*
 			// Poll the queue for the next face to examine.
 			Face adj = q.poll();
 			// If we got a face...
@@ -98,34 +104,18 @@ public class Face implements Comparable {
 				}
 				buildVertexAdjacencies(q, v);
 			}
-			System.out.print("Size of v's adjacent faces: " + v.getAdjacentFaces().size() + "\n");
+			*/
+
 	}
 	
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
-			
-			myAnchor.addSharedFace(this);
-			
-			PriorityQueue<Face> seed = new PriorityQueue<Face>();
-			for (Face f : myAdjacentFaces) {
-				seed.add(f);
-			}
-			
-			buildVertexAdjacencies(seed, myAnchor);
-			
-			float[] normal = new float[3];
-			
-			for (Face f : myAnchor.getAdjacentFaces()) {
-				float[] fNormal = f.calculateFaceNormal(gl, glu, glut);
-				normal[0] += fNormal[0];
-				normal[1] += fNormal[1];
-				normal[2] += fNormal[2];
-			}
-			
+		
+			Collections.sort(myVertices);
+			float[] normal = myAnchor.getVertexNormal(gl, glu, glut);
 			gl.glNormal3f(normal[0], normal[1], normal[2]);
-			//System.out.printf("Drawing vertex (%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
 			gl.glVertex3f(myAnchor.getX(), myAnchor.getY(), myAnchor.getZ());
 		
-		/*for (Vertex v : myVertices) {
+			/*for (Vertex v : myVertices) {
 			
 			v.addSharedFace(this);
 			

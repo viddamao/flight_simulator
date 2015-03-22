@@ -69,7 +69,7 @@ public class FlightSim extends Scene {
 	public void init(GL2 gl, GLU glu, GLUT glut) {
 		myAngle = -25.0f;
 		myScale = 0.05f;
-		myStepSize = 16;
+		myStepSize = 25;
 		isCompiled = false;
 		myFaces = new ArrayList<List<Face>>();
 		myRenderMode = GL2.GL_QUADS;
@@ -222,11 +222,11 @@ public class FlightSim extends Scene {
 	private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
 		gl.glBegin(myRenderMode);
 		{
-			for (List<Face> faces : myTerrain.getFaces()) {
+			/*for (List<Face> faces : myTerrain.getFaces()) {
 				for (Face f : faces) {
 					f.drawFace(gl, glu, glut);
 				}
-			}
+			}*/
 		}
 		gl.glEnd();
 	}
