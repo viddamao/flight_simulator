@@ -44,24 +44,30 @@ public class Terrain {
 				float y0 = Y - height / 2.0f;
 				float z0 = myHeightMap.getColor(X, Y).getRed();
 				Vertex v0 = new Vertex(x0, z0, y0);
+				face.addVertex(v0);
+				face.setAnchor(v0);
 
 				// MIDDLE TOP
 				float x1 = x0;
 				float y1 = y0 + myStepSize;
 				float z1 = myHeightMap.getColor((int) x1, (int) y1).getRed();
 				Vertex v1 = new Vertex(x1, y1, z1);
+				face.addVertex(v1);
 
 				// RIGHT TOP
 				float x2 = x0 + myStepSize;
 				float y2 = y0 + myStepSize;
 				float z2 = myHeightMap.getColor((int) x2, (int) y2).getRed();
 				Vertex v2 = new Vertex(x2, y2, z2);
+				face.addVertex(v2);
 				
 				// RIGHT CENTER
 				float x3 = x0 + myStepSize;
 				float y3 = y0;
 				float z3 = myHeightMap.getColor((int) x3, (int) y3).getRed();
 				Vertex v3 = new Vertex(x3, y3, z3);
+				face.addVertex(v3);
+
 				
 				/* ------------
 				
@@ -95,13 +101,7 @@ public class Terrain {
 				float z8 = myHeightMap.getColor((int) x2, (int) y2).getRed();
 				Vertex v8 = new Vertex(x8, y8, z8);
 				
-				-------------- */
-
-				face.addVertex(v0);
-				face.addVertex(v1);
-				face.addVertex(v2);
-				face.addVertex(v3);
-
+				-------------- */				
 				col.add(face);
 			}
 			myFaces.add(col);
@@ -113,7 +113,6 @@ public class Terrain {
 		for (int c = 0; c < myFaces.size(); c++) {
 			for (int r = 0; r < myFaces.get(0).size(); r++) {
 				Face current = myFaces.get(c).get(r);
-				
 				if (isInBounds(c+1, r)) {
 					Face top = myFaces.get(c+1).get(r);
 					current.addAdjacentFace(top);
@@ -129,8 +128,7 @@ public class Terrain {
 				if (isInBounds(c, r-1)) {
 					Face left = myFaces.get(c).get(r-1);
 					current.addAdjacentFace(left);
-				}
-				
+				}	
 			}
 		}
 	}

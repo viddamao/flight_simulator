@@ -23,7 +23,7 @@ import framework.Scene;
  */
 public class FlightSim extends Scene {
 
-	private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
+	private final String DEFAULT_MAP_FILE = "images/austrailia_topo.jpg";
 	private final float HEIGHT_RATIO = 0.25f;
 	private final int TERRAIN_ID = 1;
 
@@ -107,11 +107,11 @@ public class FlightSim extends Scene {
 	public void animate(GL2 gl, GLU glu, GLUT glut) {
 		gl.glTranslatef(0, 0, FLIGHT_SPEED);
 		if (BANK_RIGHT) {
-			gl.glRotatef(0.25f, 0, 1, 0);
+			gl.glRotatef(0.5f, 0, 1, 0);
 			BANK_RIGHT = false;
 		}
 		if (BANK_LEFT) {
-			gl.glRotatef(-0.25f, 0, 1, 0);
+			gl.glRotatef(-0.5f, 0, 1, 0);
 			BANK_LEFT = false;
 		}
 		if (OBJECT_ASCEND) {
@@ -224,7 +224,6 @@ public class FlightSim extends Scene {
 		{
 			for (List<Face> faces : myTerrain.getFaces()) {
 				for (Face f : faces) {
-					//f.printDiagnosticInfo();
 					f.drawFace(gl, glu, glut);
 				}
 			}

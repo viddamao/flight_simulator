@@ -18,6 +18,7 @@ public class Face implements Comparable {
 	private ArrayList<Face> myAdjacentFaces;
 	private ArrayList<Vertex> myVertices;
 	private float[] myFaceNormal;
+	private Vertex myAnchor;
 	
 	public Face() {
 		myAdjacentFaces = new ArrayList<Face>();
@@ -35,11 +36,19 @@ public class Face implements Comparable {
 		myVertices.add(v);
 	}
 	
+	public void setAnchor(Vertex v) {
+		myAnchor = v;
+	}
+	
+	public Vertex getAnchor() {
+		return myAnchor;
+	}
+	
 	public boolean hasVertex(Vertex v) {
 		for (Vertex t : myVertices) {
-			System.out.printf("V:(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
-			System.out.printf("T:(%f, %f, %f)\n", t.getX(), t.getY(), t.getZ());
-			if (v.getX() == t.getX() && v.getY() == t.getY()) {
+			//System.out.printf("V:(%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
+			//System.out.printf("T:(%f, %f, %f)\n", t.getX(), t.getY(), t.getZ());
+			if (v.getX() == t.getX() && v.getY() == t.getY() && v.getZ() == t.getZ()) {
 				return true;
 			}
 		}
@@ -64,33 +73,70 @@ public class Face implements Comparable {
         myFaceNormal[2] = nz;
        
         return myFaceNormal;
-        
 	}
 	
-	public void buildVertexAdjacencies(Queue<Face> q, Vertex v) {
+	public void buildVertexAdjacencies(PriorityQueue<Face> q, Vertex v) {
+			// Poll the queue for the next face to examine.
 			Face adj = q.poll();
+			// If we got a face...
 			if(adj != null) { 
+				// If it has the vertex we're looking for...
 				if (adj.hasVertex(v)) {
-					v.addSharedFace(adj);
-					for (Face f : adj.myAdjacentFaces) {
-						q.add(f);
+					// ...and if we haven't already added this to our list of faces...
+					if(!v.getAdjacentFaces().contains(adj)) {
+						// ...add the shared face.
+						v.addSharedFace(adj);
+						// Then, for all of the faces touching that face...
+						for (Face f : adj.myAdjacentFaces) {
+							// ...if we haven't already added it to our queue...
+							if (!q.contains(f)) {
+								// add the 
+								q.add(f);
+							}
+						}
 					}
 				}
 				buildVertexAdjacencies(q, v);
 			}
+			System.out.print("Size of v's adjacent faces: " + v.getAdjacentFaces().size() + "\n");
 	}
 	
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
-		for (Vertex v : myVertices) {
+			
+			myAnchor.addSharedFace(this);
+			
+			PriorityQueue<Face> seed = new PriorityQueue<Face>();
+			for (Face f : myAdjacentFaces) {
+				seed.add(f);
+			}
+			
+			buildVertexAdjacencies(seed, myAnchor);
+			
 			float[] normal = new float[3];
+			
+			for (Face f : myAnchor.getAdjacentFaces()) {
+				float[] fNormal = f.calculateFaceNormal(gl, glu, glut);
+				normal[0] += fNormal[0];
+				normal[1] += fNormal[1];
+				normal[2] += fNormal[2];
+			}
+			
+			gl.glNormal3f(normal[0], normal[1], normal[2]);
+			//System.out.printf("Drawing vertex (%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
+			gl.glVertex3f(myAnchor.getX(), myAnchor.getY(), myAnchor.getZ());
+		
+		/*for (Vertex v : myVertices) {
+			
+			v.addSharedFace(this);
 			
 			Queue<Face> seed = new PriorityQueue<Face>();
 			for (Face f : myAdjacentFaces) {
 				seed.add(f);
 			}
 			
-			buildVertexAdjacencies(seed, v);
+			buildVertexAdjacencies(seed, myAnchor);
 			
+			float[] normal = new float[3];
 			for (Face f : v.getAdjacentFaces()) {
 				float[] fNormal = f.calculateFaceNormal(gl, glu, glut);
 				normal[0] += fNormal[0];
@@ -98,12 +144,10 @@ public class Face implements Comparable {
 				normal[2] += fNormal[2];
 			}
 			
-			float[] n = normalize(normal);
-			gl.glNormal3f(n[0], n[1], n[2]);
-			
+			gl.glNormal3f(normal[0]/4, normal[1]/4, normal[2]/4);
 			//System.out.printf("Drawing vertex (%f, %f, %f)\n", v.getX(), v.getY(), v.getZ());
 			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
-		}
+		}*/
 	}
 	
 	public float[] normalize(float[] normal) {
@@ -124,7 +168,24 @@ public class Face implements Comparable {
 	}
 
 	public int compareTo(Object o) {
-		return 0;
+		Face f = (Face) o;
+		if (this.getAnchor().getY() > f.getAnchor().getY()) {
+			return -1;
+		}
+		else if (this.getAnchor().getY() < f.getAnchor().getY()){
+			return 1;
+		}
+		else {
+			if (this.getAnchor().getX() > f.getAnchor().getX()) {
+				return -1;
+			}
+			else if (this.getAnchor().getX() < f.getAnchor().getX()) {
+				return 1;
+			}
+			else {
+				return 0;
+			}
+		}
 	}
 
 }
