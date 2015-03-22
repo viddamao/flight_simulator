@@ -224,6 +224,7 @@ public class FlightSim extends Scene {
 		{
 			for (List<Face> faces : myTerrain.getFaces()) {
 				for (Face f : faces) {
+					//f.printDiagnosticInfo();
 					f.drawFace(gl, glu, glut);
 				}
 			}
