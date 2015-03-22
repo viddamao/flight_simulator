@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.Frame;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -164,7 +166,9 @@ public class Skybox implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable drawable) {
 	// TODO Auto-generated method stub
-
+	
     }
+
+   
 
 }
