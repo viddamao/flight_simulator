@@ -7,6 +7,7 @@ import framework.Pixmap;
 
 public class Terrain {
 
+	private static final boolean IS_DETAILED = true;
 	private static Terrain _TERRAIN;
 	private Pixmap myHeightMap;
 	private List<List<Face>> myFaces;
@@ -32,8 +33,10 @@ public class Terrain {
 	public void build() {
 		int width = myHeightMap.getSize().width;
 		int height = myHeightMap.getSize().height;
-		buildVertexMap(width, height);
-		buildFaceMap(width, height);
+		buildVertexMap(width,height);
+		buildFaceMap();
+
+		
 	}
 	
 	private void buildVertexMap(int width, int height) {
@@ -64,13 +67,13 @@ public class Terrain {
 			myVertices.add(vCol);
 		}
 		for (List<Vertex> vertices : myVertices) {
-			System.out.print(vertices.size());
+			//System.out.print(vertices.size());
 		}
-		System.out.print("Vertex map is " + myVertices.size() + " columns by " + myVertices.get(0).size() + " rows.\n");
+		//System.out.print("Vertex map is " + myVertices.size() + " columns by " + myVertices.get(0).size() + " rows.\n");
 	}
 	
-	private void buildFaceMap(int width, int height) {
-		for (int X = 0; X < myVertices.size() -  1; X++) {
+	private void buildFaceMap() {
+ 	    	for (int X = 0; X < myVertices.size() -  1; X++) {
 			List<Face> fCol = new ArrayList<Face>();
 			for (int Y = 0; Y < myVertices.get(0).size() - 1; Y++) {
 				Face face = new Face();
@@ -79,16 +82,25 @@ public class Terrain {
 				boolean inBoundsY = (Y+1 < myVertices.get(0).size());
 				
 				if (inBoundsX && inBoundsY) {				
-					face.addVertex(myVertices.get(X).get(Y));
+					try{
+				    	face.addVertex(myVertices.get(X).get(Y));
 					face.addVertex(myVertices.get(X+1).get(Y));
 					face.addVertex(myVertices.get(X+1).get(Y+1));
 					face.addVertex(myVertices.get(X).get(Y+1));	
+					}
+					catch(IndexOutOfBoundsException e){
+					    System.out.println(X);
+					    System.out.println(myVertices.size());
+					    System.out.println(Y);
+					    System.out.println(myVertices.get(0).size());
+					    System.out.println();
+					    
+					}
 				}
 				fCol.add(face);
 			}
 			myFaces.add(fCol);
 		}
-		System.out.print("Face map is " + myFaces.size() + " columns by " + myFaces.get(0).size() + " rows.\n");
 	}
 	
 	public ArrayList<Face> vfQuery(Vertex v) {
