@@ -1,7 +1,5 @@
 package main;
 
-import java.awt.Frame;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,14 +9,12 @@ import java.util.List;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.jogamp.graph.geom.Triangle;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
@@ -97,16 +93,30 @@ public class FlightSim extends Scene {
 	myTerrain.init(myHeightMap, myStepSize);
 	myTerrain.build();
 
-	//createSkybox();
+	createSkybox();
 	// make all normals unit length
 	gl.glEnable(GL2.GL_NORMALIZE);
 	// interpolate color on objects across polygons
 	gl.glShadeModel(GL2.GL_SMOOTH);
-	gl.glEnable(gl.GL_FOG);
-	gl.glFogf(gl.GL_FOG_MODE, gl.GL_EXP);
-	gl.glFogf(gl.GL_FOG_START,0.9f);
-	gl.glFogf(gl.GL_FOG_DENSITY,0.1f);
 	
+	enableFog(gl);
+	
+    }
+
+
+    /**Set up fog and clear color
+     * 
+     * @param gl
+     */
+    private void enableFog(GL2 gl) {
+        float[] fogColor = new float[]{0.9f, 0.9f, 0.95f, 1.0f};
+        gl.glFogfv(gl.GL_FOG_COLOR, fogColor, 0);
+        gl.glFogi(gl.GL_FOG_MODE, gl.GL_EXP);
+        gl.glFogf(gl.GL_FOG_START, 10.0f);
+        gl.glFogf(gl.GL_FOG_END, 80.0f);
+        gl.glFogf(gl.GL_FOG_DENSITY,0.05f);
+        gl.glEnable(gl.GL_FOG);
+        gl.glClearColor(fogColor[0], fogColor[1], fogColor[2], 0.0f);
     }
 
     private void createSkybox() {
@@ -131,7 +141,7 @@ public class FlightSim extends Scene {
                 }).start();
             }
         });
-        //myFrame.setVisible(true);
+        myFrame.setVisible(true);
 	animator.start();
     
     }
