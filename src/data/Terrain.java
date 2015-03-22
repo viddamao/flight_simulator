@@ -38,13 +38,14 @@ public class Terrain {
 	
 	private void buildVertexMap(int width, int height) {
 		
-		int col = -1;
 		int row = -1;
 		
 		for (int X = 0; X < width; X += myStepSize) {
-			
+		
+		    
 			row++;
-			
+
+			int col = -1;
 			List<Vertex> vCol = new ArrayList<Vertex>();
 			
 			for (int Y = 0; Y < height; Y+= myStepSize) {
@@ -95,7 +96,7 @@ public class Terrain {
 		int c = v.getCol();
 		int r = v.getRow();
 		
-		System.out.print("vfQuery for point: (" + c + ", " + r + ")\n");
+		//System.out.print("vfQuery for point: (" + c + ", " + r + ")\n");
 		
 		if (c >= 0 && c < myFaces.size() && r >=0 && r < myFaces.get(0).size()) {
 			adjacentFaces.add(myFaces.get(c).get(r));
@@ -110,7 +111,7 @@ public class Terrain {
 			adjacentFaces.add(myFaces.get(c).get(r-1));
 		}
 		
-		System.out.print("vfQuery returned " + adjacentFaces.size() + " adjacent faces.\n");
+		//System.out.print("vfQuery returned " + adjacentFaces.size() + " adjacent faces.\n");
 		return adjacentFaces;
 
 	}

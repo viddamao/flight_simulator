@@ -141,7 +141,7 @@ public class FlightSim extends Scene {
                 }).start();
             }
         });
-        myFrame.setVisible(true);
+        //myFrame.setVisible(true);
 	animator.start();
     
     }
@@ -176,7 +176,6 @@ public class FlightSim extends Scene {
 	        gl.glPopMatrix();
 	        RESET_VIEW = false;
 	        INIT_DONE=false;
-	        
 	    }
 
 	    	if (BANK_RIGHT) {
