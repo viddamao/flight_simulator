@@ -1,12 +1,25 @@
+package main;
+
+import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.media.opengl.GL2;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.jogamp.graph.geom.Triangle;
+import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import data.Face;
@@ -22,67 +35,106 @@ import framework.Scene;
  * @author Robert C. Duvall
  */
 public class FlightSim extends Scene {
-
-	private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
-	private final float HEIGHT_RATIO = 0.25f;
-	private final int TERRAIN_ID = 1;
-
-	// camera controls state
-	private static final float SPEED_INCREMENT = 0.02f;
-	private final float DEFAULT_FLIGHT_SPEED = 0.01f;
-	private float FLIGHT_SPEED = 0.01f;
-	private boolean TILT_RIGHT = false;
-	private boolean TILT_LEFT = false;
-	private boolean OBJECT_ASCEND = false;
-	private boolean OBJECT_DESCEND = false;
-	private boolean BANK_RIGHT = false;
-	private boolean BANK_LEFT = false;
-
-	// animation state
-	private float myAngle;
-	private float myScale;
-	private int myStepSize;
-	private int myRenderMode;
-	private boolean isCompiled;
-	private List<List<Face>> myFaces;
-	private Pixmap myHeightMap;
-	
+    
+    private static JFrame myFrame;
+    private static Scene myScene;
+    private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
+    private final float HEIGHT_RATIO = 0.25f;
+    private final int TERRAIN_ID = 1;
+    
+    // camera controls state
+    private static final float SPEED_INCREMENT = 0.02f;
+    private final float DEFAULT_FLIGHT_SPEED=0.01f;
+    private float FLIGHT_SPEED = 0.01f;
+    private boolean TILT_RIGHT = false;
+    private boolean TILT_LEFT = false;
+    private boolean OBJECT_ASCEND = false;
+    private boolean OBJECT_DESCEND = false;
+    private boolean BANK_RIGHT = false;
+    private boolean BANK_LEFT = false;
+    private boolean RESET_VIEW=false;
+    private boolean INIT_DONE=false;
+    
+    // animation state
+    private float myAngle;
+    private float myScale;
+    private int myStepSize;
+    private int myRenderMode;
+    private boolean isCompiled;
+    private ArrayList<List<Face>> myFaces;
+    private Pixmap myHeightMap;
+    
 	// terrain
 	private Terrain myTerrain;
-
-	public FlightSim(String[] args) {
-		super("Flight Simulator");
-		String name = (args.length > 1) ? args[0] : DEFAULT_MAP_FILE;
-		try {
-			myHeightMap = new Pixmap((args.length > 1) ? args[0]
-					: DEFAULT_MAP_FILE);
-		} catch (IOException e) {
-			System.err.println("Unable to load texture image: " + name);
-			System.exit(1);
-		}
+    
+    public FlightSim(String[] args) {
+	super("Flight Simulator");
+	String name = (args.length > 1) ? args[0] : DEFAULT_MAP_FILE;
+	try {
+	    myHeightMap = new Pixmap((args.length > 1) ? args[0]
+		    : DEFAULT_MAP_FILE);
+	} catch (IOException e) {
+	    System.err.println("Unable to load texture image: " + name);
+	    System.exit(1);
 	}
+    }
 
-	/**
-	 * Initialize general OpenGL values once (in place of constructor).
-	 */
-	@Override
-	public void init(GL2 gl, GLU glu, GLUT glut) {
-		myAngle = -25.0f;
-		myScale = 0.05f;
-		myStepSize = 16;
-		isCompiled = false;
-		myFaces = new ArrayList<List<Face>>();
-		myRenderMode = GL2.GL_QUADS;
-		
-		myTerrain = Terrain.getTerrain();
-		myTerrain.init(myHeightMap, myStepSize);
-		myTerrain.build();
-		
-		// make all normals unit length
-		gl.glEnable(GL2.GL_NORMALIZE);
-		// interpolate color on objects across polygons
-		gl.glShadeModel(GL2.GL_SMOOTH);
-	}
+    /**
+     * Initialize general OpenGL values once (in place of constructor).
+     */
+    @Override
+    public void init(GL2 gl, GLU glu, GLUT glut) {
+	myFaces = new ArrayList<List<Face>>();
+	myRenderMode = GL2.GL_QUADS;
+	myAngle = -25.0f;
+	myScale = 0.05f;
+	myStepSize = 16;
+	isCompiled = false;
+	
+	myRenderMode = GL2.GL_QUADS;
+	
+	myTerrain = Terrain.getTerrain();
+	myTerrain.init(myHeightMap, myStepSize);
+	myTerrain.build();
+
+	//createSkybox();
+	// make all normals unit length
+	gl.glEnable(GL2.GL_NORMALIZE);
+	// interpolate color on objects across polygons
+	gl.glShadeModel(GL2.GL_SMOOTH);
+	gl.glEnable(gl.GL_FOG);
+	gl.glFogf(gl.GL_FOG_MODE, gl.GL_EXP);
+	gl.glFogf(gl.GL_FOG_START,0.9f);
+	gl.glFogf(gl.GL_FOG_DENSITY,0.1f);
+	
+    }
+
+    private void createSkybox() {
+	GLProfile glprofile=GLProfile.getDefault();
+	GLCapabilities glcapabilities = new GLCapabilities( glprofile );
+        final GLCanvas glcanvas = new GLCanvas( glcapabilities );
+        glcanvas.addGLEventListener(new Skybox());
+        myFrame.getContentPane().add(glcanvas);
+        final Animator animator=new Animator(glcanvas);
+        myFrame.setSize(400, 200);
+        myFrame.addWindowListener(new WindowAdapter() {
+ 
+            @Override
+            public void windowClosing(WindowEvent e) {
+                new Thread(new Runnable() {
+ 
+                    public void run() {
+
+                	animator.stop();
+                        System.exit(0);
+                    }
+                }).start();
+            }
+        });
+        //myFrame.setVisible(true);
+	animator.start();
+    
+    }
 
 	/**
 	 * Draw all of the objects to display.
@@ -231,8 +283,12 @@ public class FlightSim extends Scene {
 		gl.glEnd();
 	}
 
-	// allow program to be run from here
-	public static void main(String[] args) {
-		new JOGLFrame(new FlightSim(args));
-	}
+    //*/
+
+    // allow program to be run from here
+    public static void main(String[] args) {
+	myScene=new FlightSim(args);
+	myFrame=new JOGLFrame(myScene);
+	myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
 }
