@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -8,16 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.media.opengl.GL2;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.jogamp.graph.geom.Triangle;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import data.Face;
 import data.Vertex;
-
 import framework.JOGLFrame;
 import framework.Pixmap;
 import framework.Scene;
@@ -29,7 +34,7 @@ import framework.Scene;
  */
 public class FlightSim extends Scene {
     
-    private static JOGLFrame myFrame;
+    private static JFrame myFrame;
     private static Scene myScene;
     private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
     private final float HEIGHT_RATIO = 0.25f;
@@ -54,6 +59,8 @@ public class FlightSim extends Scene {
     private boolean isCompiled;
     private ArrayList<Face> myFaces;
     private Pixmap myHeightMap;
+    private boolean RESET_VIEW=false;
+    private boolean INIT_DONE=false;
     
     
     public FlightSim(String[] args) {
@@ -89,32 +96,29 @@ public class FlightSim extends Scene {
     }
 
     private void createSkybox() {
-        GLCanvas canvas = new GLCanvas();
- 
-        canvas.addGLEventListener(new Skybox());
-        myFrame.add(canvas);
-        myFrame.setSize(640, 480);
-        final Animator animator = new Animator(canvas);
+	GLProfile glprofile=GLProfile.getDefault();
+	GLCapabilities glcapabilities = new GLCapabilities( glprofile );
+        final GLCanvas glcanvas = new GLCanvas( glcapabilities );
+        glcanvas.addGLEventListener(new Skybox());
+        myFrame.getContentPane().add(glcanvas);
+        final Animator animator=new Animator(glcanvas);
+        myFrame.setSize(400, 200);
         myFrame.addWindowListener(new WindowAdapter() {
  
             @Override
             public void windowClosing(WindowEvent e) {
-                // Run this on another thread than the AWT event queue to
-                // make sure the call to Animator.stop() completes before
-                // exiting
                 new Thread(new Runnable() {
  
                     public void run() {
-                        animator.stop();
+
+                	animator.stop();
                         System.exit(0);
                     }
                 }).start();
             }
         });
-        // Center frame
-        myFrame.setLocationRelativeTo(null);
-        myFrame.setVisible(true);
-        animator.start();
+        //myFrame.setVisible(true);
+	animator.start();
     
     }
 
@@ -128,6 +132,7 @@ public class FlightSim extends Scene {
 	    gl.glDeleteLists(TERRAIN_ID, 1);
 	    gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
 	    drawTerrain(gl, glu, glut);
+	    
 	    gl.glEndList();
 	    isCompiled = true;
 	}
@@ -140,7 +145,17 @@ public class FlightSim extends Scene {
      */
     @Override
     public void animate(GL2 gl, GLU glu, GLUT glut) {
+	if (!INIT_DONE){
+	    gl.glPushMatrix();
+	    INIT_DONE=true;
+	}
 	gl.glTranslatef(0, 0, FLIGHT_SPEED);
+	if (RESET_VIEW) {
+	    gl.glPopMatrix();
+	    RESET_VIEW = false;
+	    INIT_DONE=false;
+		
+	}
 	if (BANK_RIGHT) {
 	    gl.glRotatef(0.25f, 0, 1, 0);
 	    BANK_RIGHT = false;
@@ -243,6 +258,7 @@ public class FlightSim extends Scene {
 	    BANK_LEFT = true;
 	    break;
 	case KeyEvent.VK_R:
+	    RESET_VIEW = true;
 	    FLIGHT_SPEED=DEFAULT_FLIGHT_SPEED;
 	    break;	    
 	case KeyEvent.VK_Q:
@@ -305,5 +321,6 @@ public class FlightSim extends Scene {
     public static void main(String[] args) {
 	myScene=new FlightSim(args);
 	myFrame=new JOGLFrame(myScene);
+	myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
