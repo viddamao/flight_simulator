@@ -93,6 +93,11 @@ public class FlightSim extends Scene {
 	gl.glEnable(GL2.GL_NORMALIZE);
 	// interpolate color on objects across polygons
 	gl.glShadeModel(GL2.GL_SMOOTH);
+	gl.glEnable(gl.GL_FOG);
+	gl.glFogf(gl.GL_FOG_MODE, gl.GL_EXP);
+	gl.glFogf(gl.GL_FOG_START,0.9f);
+	gl.glFogf(gl.GL_FOG_DENSITY,0.1f);
+	
     }
 
     private void createSkybox() {
@@ -301,40 +306,7 @@ public class FlightSim extends Scene {
 			    
 				//face.printDiagnosticInfo();
 			}
-			/*myStepSize*=4;
-			for (int Y = (height - myStepSize)/2;Y<height - myStepSize; Y++) {
-				Face face = new Face();
-			    
-				// set (x, y, z) value for bottom left vertex
-			    float x0 = X - width / 2.0f;
-			    float y0 = myHeightMap.getColor(X, Y).getRed();
-			    float z0 = Y - height / 2.0f;
-			    face.addVertex(new Vertex(x0, y0, z0));
-			    
-			    // set (x, y, z) value for top left vertex
-			    float x1 = x0;
-			    float y1 = myHeightMap.getColor(X, Y + myStepSize).getRed();
-			    float z1 = z0 + myStepSize;
-			    face.addVertex(new Vertex(x1, y1, z1));
-			    
-			    // set (x, y, z) value for top right vertex
-			    float x2 = x0 + myStepSize;
-			    float y2 = myHeightMap.getColor(X + myStepSize,Y + myStepSize).getRed();
-			    float z2 = z0 + myStepSize;
-			    face.addVertex(new Vertex(x2, y2, z2));
-			    
-			    // set (x, y, z) value for bottom right vertex
-			    float x3 = x0 + myStepSize;
-			    float y3 = myHeightMap.getColor(X + myStepSize, Y).getRed();
-			    float z3 = z0;
-			    face.addVertex(new Vertex(x3, y3, z3));
-			    
-			    myFaces.add(face);
-			    
-				//face.printDiagnosticInfo();
-			}
-
-			myStepSize/=4;*/
+			
     	}
     }
     
