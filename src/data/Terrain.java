@@ -13,6 +13,7 @@ public class Terrain {
 	private List<List<Face>> myFaces;
 	private List<List<Vertex>> myVertices;
 	private int myStepSize;
+	private int _DS_PASSES = 3;
 
 	protected Terrain() {}
 	
@@ -35,8 +36,6 @@ public class Terrain {
 		int height = myHeightMap.getSize().height;
 		buildVertexMap(width,height);
 		buildFaceMap();
-
-		
 	}
 	
 	private void buildVertexMap(int width, int height) {

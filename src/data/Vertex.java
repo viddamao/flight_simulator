@@ -25,7 +25,7 @@ public class Vertex implements Comparable {
 		setAdjacentFaces(new ArrayList<Face>());
 		myVertexNormal = new float[3];
 	}
-	
+
 	public float[] getVertexNormal(GL2 gl, GLU glu, GLUT glut) {
 		float[] result = new float[3];
 		ArrayList<Face> adjacentFaces = Terrain.getTerrain().vfQuery(this);
@@ -61,7 +61,7 @@ public class Vertex implements Comparable {
 	public void setZ(float z) {
 		Z = z;
 	}
-	
+
 	public void addSharedFace(Face f) {
 		getAdjacentFaces().add(f);
 	}
@@ -90,28 +90,24 @@ public class Vertex implements Comparable {
 	public void setCol(int col) {
 		this.col = col;
 	}
-	
+
 	public int compareTo(Object o) {
 		Vertex v = (Vertex) o;
 		if (this.getY() < v.getY()) {
 			return -1;
-		}
-		else if (this.getY() > v.getY()) {
+		} else if (this.getY() > v.getY()) {
 			return 1;
-		}
-		else {
+		} else {
 			if (this.getX() < v.getX()) {
 				return -1;
-			}
-			else if (this.getX() > v.getX()) {
+			} else if (this.getX() > v.getX()) {
 				return 1;
-			}
-			else {
+			} else {
 				return 0;
 			}
 		}
 	}
-	
+
 	public String printCoordinates() {
 		return "(" + col + "," + row + ") : {" + X + "," + Y + "," + Z + "}\n";
 	}
