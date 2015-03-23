@@ -17,7 +17,8 @@ public class Vertex implements Comparable {
 	private int row;
 	private ArrayList<Face> myAdjacentFaces;
 	private float[] myVertexNormal;
-
+	private static int MAX_COL=1024;
+	
 	public Vertex(float x, float y, float z) {
 		setX(x);
 		setY(y);
@@ -91,6 +92,11 @@ public class Vertex implements Comparable {
 		this.col = col;
 	}
 
+	public boolean getDetailed(){
+	    return this.col<=MAX_COL/2;
+	    
+	}
+	
 	public int compareTo(Object o) {
 		Vertex v = (Vertex) o;
 		if (this.getY() < v.getY()) {

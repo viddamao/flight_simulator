@@ -105,6 +105,7 @@ public class Terrain {
 		int c = v.getCol();
 		int r = v.getRow();
 		
+		
 		if (c >= 0 && c < myFaces.size() && r >=0 && r < myFaces.get(0).size()) {
 			adjacentFaces.add(myFaces.get(c).get(r));
 		}

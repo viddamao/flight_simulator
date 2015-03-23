@@ -93,7 +93,7 @@ public class FlightSim extends Scene {
 		myTerrain.init(myHeightMap, myStepSize);
 		myTerrain.build();
 
-		createSkybox();
+		//createSkybox();
 		// make all normals unit length
 		gl.glEnable(GL2.GL_NORMALIZE);
 		// interpolate color on objects across polygons
@@ -109,7 +109,7 @@ public class FlightSim extends Scene {
 	 * @param gl
 	 */
 	private void enableFog(GL2 gl) {
-		float[] fogColor = new float[] { 0.9f, 0.9f, 0.95f, 1.0f };
+		float[] fogColor = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
 		gl.glFogfv(gl.GL_FOG_COLOR, fogColor, 0);
 		gl.glFogi(gl.GL_FOG_MODE, gl.GL_EXP);
 		gl.glFogf(gl.GL_FOG_START, 10.0f);
@@ -306,7 +306,7 @@ public class FlightSim extends Scene {
 
 	public static void main(String[] args) {
 		myScene = new FlightSim(args);
-		myFrame = new JOGLFrame(myScene);
+		myFrame=new JOGLFrame(myScene);
 		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }
