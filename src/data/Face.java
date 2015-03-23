@@ -1,6 +1,7 @@
 package data;
 
 import data.Vertex;
+import framework.ImprovedNoise;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,9 @@ public class Face implements Comparable {
 	private int myCol;
 	private int myRow;
 	private Vertex myAnchor;
-
+	private double[][] myGrid=new double[5][5];
+	private ImprovedNoise myNoise=new ImprovedNoise();
+	
 	public Face() {
 		myAdjacentFaces = new ArrayList<Face>();
 		myVertices = new ArrayList<Vertex>();
@@ -67,7 +70,12 @@ public class Face implements Comparable {
 
 		return myFaceNormal;
 	}
-
+	
+	
+	public void drawPreprocessedGrid(){
+	    
+	}
+	
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
 	    	int drawDetail=0;
 		// System.out.print("--------------\nDRAWING FACE:\n");
@@ -102,7 +110,146 @@ public class Face implements Comparable {
 			}
 		}
 	}
-
+	
+	@SuppressWarnings("static-access")
+	private void preprocess(){
+	    myGrid[0][0]= myVertices.get(0).getY();
+	    myGrid[4][0]= myVertices.get(1).getY();
+	    myGrid[4][4]= myVertices.get(2).getY();
+	    myGrid[0][4]= myVertices.get(3).getY();
+	    
+	    //1 pass
+	    double xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX())/2;
+	    double yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ())/2;
+	    double zAvg=(myGrid[0][0]+myGrid[0][4]+myGrid[4][0]+myGrid[4][4])/4;
+	    myGrid[2][2]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    //2 pass
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX())/2;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(2).getZ())/2;
+	    zAvg=(myGrid[0][0]+myGrid[2][2]+myGrid[4][0]+myGrid[2][2])/4;
+	    myGrid[2][0]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(4).getX())/2;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ())/2;
+	    zAvg=(myGrid[0][0]+myGrid[2][2]+myGrid[0][4]+myGrid[2][2])/4;
+	    myGrid[0][2]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(3).getX()+myVertices.get(4).getX())/2;
+	    yAvg=(myVertices.get(3).getZ()+myVertices.get(4).getZ())/2;
+	    zAvg=(myGrid[0][4]+myGrid[2][2]+myGrid[4][4]+myGrid[2][2])/4;
+	    myGrid[2][4]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(2).getX()+myVertices.get(3).getX())/2;
+	    yAvg=(myVertices.get(2).getZ()+myVertices.get(3).getZ())/2;
+	    zAvg=(myGrid[4][0]+myGrid[2][2]+myGrid[4][4]+myGrid[2][2])/4;
+	    myGrid[4][2]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    //3 pass
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(0).getX()+
+		    myVertices.get(0).getX()+myVertices.get(2).getX())/4;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(0).getZ()+
+		    myVertices.get(0).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[0][0]+myGrid[2][0]+myGrid[0][2]+myGrid[2][2])/4;
+	    myGrid[1][1]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX()+
+		    myVertices.get(2).getX()+myVertices.get(2).getX())/4;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(0).getZ()+
+		    myVertices.get(0).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[2][0]+myGrid[2][2]+myGrid[4][2]+myGrid[4][0])/4;
+	    myGrid[3][1]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(0).getX()+
+		    myVertices.get(0).getX()+myVertices.get(2).getX())/4;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ()+
+		    myVertices.get(4).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[0][2]+myGrid[2][2]+myGrid[0][4]+myGrid[2][4])/4;
+	    myGrid[1][3]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX()+
+		    myVertices.get(2).getX()+myVertices.get(2).getX())/4;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ()+
+		    myVertices.get(4).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[2][2]+myGrid[2][4]+myGrid[4][2]+myGrid[4][4])/4;
+	    myGrid[3][3]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    
+	    //4 pass
+	    
+	    xAvg=myVertices.get(0).getX();
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(0).getZ()+
+		    myVertices.get(0).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[0][0]+myGrid[0][2]+myGrid[1][1]+myGrid[1][1])/4;
+	    myGrid[0][1]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=myVertices.get(0).getX();
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ()+
+		    myVertices.get(4).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[0][4]+myGrid[0][2]+myGrid[1][3]+myGrid[1][3])/4;
+	    myGrid[0][3]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(0).getX()+
+		    myVertices.get(0).getX()+myVertices.get(2).getX())/4;
+	    yAvg=myVertices.get(0).getZ();
+	    zAvg=(myGrid[0][0]+myGrid[2][0]+myGrid[1][1]+myGrid[1][1])/4;
+	    myGrid[1][0]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(0).getX()+
+		    myVertices.get(0).getX()+myVertices.get(2).getX())/4;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ())/2;
+	    zAvg=(myGrid[1][1]+myGrid[2][0]+myGrid[2][2]+myGrid[1][3])/4;
+	    myGrid[1][2]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(0).getX()+
+		    myVertices.get(0).getX()+myVertices.get(2).getX())/4;
+	    yAvg=myVertices.get(4).getZ();
+	    zAvg=(myGrid[0][4]+myGrid[2][4]+myGrid[1][3]+myGrid[1][3])/4;
+	    myGrid[1][4]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX())/2;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(0).getZ()+
+		    myVertices.get(0).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[1][1]+myGrid[3][1]+myGrid[2][2]+myGrid[2][0])/4;
+	    myGrid[2][1]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX())/2;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ()+
+		    myVertices.get(4).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[2][2]+myGrid[1][3]+myGrid[3][3]+myGrid[2][4])/4;
+	    myGrid[2][3]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX()+
+		    myVertices.get(2).getX()+myVertices.get(2).getX())/4;
+	    yAvg=myVertices.get(0).getZ();
+	    zAvg=(myGrid[2][0]+myGrid[4][0]+myGrid[3][1]+myGrid[3][1])/4;
+	    myGrid[3][0]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX()+
+		    myVertices.get(2).getX()+myVertices.get(2).getX())/4;
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ())/2;
+	    zAvg=(myGrid[2][2]+myGrid[4][2]+myGrid[3][1]+myGrid[3][3])/4;
+	    myGrid[3][2]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=(myVertices.get(0).getX()+myVertices.get(2).getX()+
+		    myVertices.get(2).getX()+myVertices.get(2).getX())/4;
+	    yAvg=myVertices.get(4).getZ();
+	    zAvg=(myGrid[2][4]+myGrid[4][4]+myGrid[3][3]+myGrid[3][3])/4;
+	    myGrid[3][4]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=myVertices.get(2).getX();
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(0).getZ()+
+		    myVertices.get(0).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[4][2]+myGrid[4][0]+myGrid[3][1]+myGrid[3][1])/4;
+	    myGrid[4][1]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	    xAvg=myVertices.get(2).getX();
+	    yAvg=(myVertices.get(0).getZ()+myVertices.get(4).getZ()+
+		    myVertices.get(4).getZ()+myVertices.get(4).getZ())/4;
+	    zAvg=(myGrid[4][2]+myGrid[4][4]+myGrid[3][3]+myGrid[3][3])/4;
+	    myGrid[4][3]=myNoise.noise(xAvg,yAvg,zAvg);
+	    
+	}
 	public int getMyCol() {
 		return myCol;
 	}
