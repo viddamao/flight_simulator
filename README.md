@@ -39,12 +39,12 @@ Upon instantiation, Terrain.java calls the build() method to begin processing th
 
 drawTerrain() effectively iterates through the face map and calls each face's drawFace() method to display the quad in the flight simulator.
 
-#Team Memmbers
+#Team Members
 
 ###Michael Marion
-Started: Thursday, March 19
-Finished: Sunday, March 22
-Time Spent: 20 hours
+Started: Thursday, March 19  
+Finished: Sunday, March 22  
+Time Spent: 20 hours  
 Resources used: [This summary](https://code.google.com/p/fractalterraingeneration/wiki/Diamond_Square) of the Diamond Square algorithm proved useful in conceptualizing the process.
 
 ###Wenjun Mao
