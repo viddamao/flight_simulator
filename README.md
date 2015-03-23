@@ -22,3 +22,29 @@ Up and down arrow controls speed up and slow down flight speed
 Keyboard A: switch between a smooth shaded, flat shaded, and wireframe terrain
 Keyboard R: reset the scene viewpoint
 Keyboard Q: pop message and then quit the program
+
+##Implementation Details
+Our program is structured as follows. There are three main classes: Terrain.java, Face.java, and Vertex.java
+
+####Terrain.java
+Holds in state a 2D-ArrayList of Vertices and a corresponding 2D-ArrayList of Faces. Faces are indexed by their bottom-left vertex, such that any given vertex can easily be queried in the face map to find adjacencies.
+
+####Face.java
+Holds in state a list of four vertices as well as logic to calculate its own face normal given those vertices. 
+
+####Vertex.java
+Holds in state both scene-geometry (X,Y,Z) cooordinates and (row, column) coordinates that correspond to the vertex's position in the vertex map, and the position of the face anchored by this vertex in the face map. Vertices are also capable of calculating their own normals by querying themselves in the Terrain's vertex and face maps.
+
+Upon instantiation, Terrain.java calls the build() method to begin processing the image file into a vertex map. After the vertex map is complete, the vertices are joined together into Face objects that are capable of drawing themselves. 
+
+drawTerrain() effectively iterates through the face map and calls each face's drawFace() method to display the quad in the flight simulator.
+
+#Team Memmbers
+
+###Michael Marion
+Started: Thursday, March 19
+Finished: Sunday, March 22
+Time Spent: 20 hours
+Resources used: [This summary](https://code.google.com/p/fractalterraingeneration/wiki/Diamond_Square) of the Diamond Square algorithm proved useful in conceptualizing the process.
+
+###Wenjun Mao
