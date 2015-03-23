@@ -72,12 +72,9 @@ public class Face implements Comparable {
 		// System.out.print("--------------\nDRAWING FACE:\n");
 		for (Vertex v : myVertices) {
 			float[] normal = v.getVertexNormal(gl, glu, glut);
-	        gl.glColor3f(0.5f, 0, 0);
-			// System.out.printf("Normal: {%f, %f, %f}  ", normal[0], normal[1],
-			// normal[2]);
+			float z = v.getY();
+	        gl.glColor3f((z/255) * .64f, (z/255) * .16f, (z/255) * .16f);
 			gl.glNormal3f(normal[0], normal[1], normal[2]);
-			// System.out.printf("Coordinates: (%f, %f, %f)\n", v.getX(),
-			// v.getY(), v.getZ());
 			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
 		}
 	}
