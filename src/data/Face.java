@@ -69,20 +69,16 @@ public class Face implements Comparable {
 	}
 
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
-	    	int drawDetail=0;
 		// System.out.print("--------------\nDRAWING FACE:\n");
 		for (Vertex v : myVertices) {
-		    	if (v.getDetailed()||drawDetail==4){ 
 			float[] normal = v.getVertexNormal(gl, glu, glut);
+	        gl.glColor3f(0.5f, 0, 0);
 			// System.out.printf("Normal: {%f, %f, %f}  ", normal[0], normal[1],
 			// normal[2]);
 			gl.glNormal3f(normal[0], normal[1], normal[2]);
 			// System.out.printf("Coordinates: (%f, %f, %f)\n", v.getX(),
 			// v.getY(), v.getZ());
 			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
-		    	drawDetail=0;
-		    	}
-		    	else drawDetail+=1;
 		}
 	}
 

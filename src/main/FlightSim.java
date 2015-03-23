@@ -96,6 +96,8 @@ public class FlightSim extends Scene {
 		//createSkybox();
 		// make all normals unit length
 		gl.glEnable(GL2.GL_NORMALIZE);
+	
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
 		// interpolate color on objects across polygons
 		gl.glShadeModel(GL2.GL_SMOOTH);
 
