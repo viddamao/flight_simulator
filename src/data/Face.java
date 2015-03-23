@@ -3,10 +3,6 @@ package data;
 import data.Vertex;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;

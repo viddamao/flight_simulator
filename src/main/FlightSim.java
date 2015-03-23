@@ -304,9 +304,6 @@ public class FlightSim extends Scene {
 		gl.glEnd();
 	}
 
-	// */
-
-	// allow program to be run from here
 	public static void main(String[] args) {
 		myScene = new FlightSim(args);
 		myFrame = new JOGLFrame(myScene);

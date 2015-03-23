@@ -65,10 +65,6 @@ public class Terrain {
 			}
 			myVertices.add(vCol);
 		}
-		for (List<Vertex> vertices : myVertices) {
-			//System.out.print(vertices.size());
-		}
-		//System.out.print("Vertex map is " + myVertices.size() + " columns by " + myVertices.get(0).size() + " rows.\n");
 	}
 	
 	private void buildFaceMap() {
@@ -109,8 +105,6 @@ public class Terrain {
 		int c = v.getCol();
 		int r = v.getRow();
 		
-		//System.out.print("vfQuery for point: (" + c + ", " + r + ")\n");
-		
 		if (c >= 0 && c < myFaces.size() && r >=0 && r < myFaces.get(0).size()) {
 			adjacentFaces.add(myFaces.get(c).get(r));
 		}
@@ -124,7 +118,6 @@ public class Terrain {
 			adjacentFaces.add(myFaces.get(c).get(r-1));
 		}
 		
-		//System.out.print("vfQuery returned " + adjacentFaces.size() + " adjacent faces.\n");
 		return adjacentFaces;
 
 	}
