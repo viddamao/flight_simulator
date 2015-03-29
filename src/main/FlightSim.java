@@ -316,6 +316,7 @@ public class FlightSim extends Scene {
 			for (List<Face> faces : myTerrain.getFaces()) {
 				for (Face f : faces) {
 				        f.preprocess();
+				        f.addAdjacentFaceForInnerPoints();
 				    	f.drawFacePre(gl, glu, glut);
 				}
 			}

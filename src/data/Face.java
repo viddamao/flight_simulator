@@ -107,6 +107,7 @@ public class Face implements Comparable {
 	
 	public int compareTo(Object o) {
 		Face f = (Face) o;
+		if (this.getAnchor()==null) return 0;
 		if (this.getAnchor().getY() > f.getAnchor().getY()) {
 			return -1;
 		} else if (this.getAnchor().getY() < f.getAnchor().getY()) {
@@ -175,7 +176,7 @@ public class Face implements Comparable {
 	  
 		myGrid[x][y]=new Vertex(xAvg, yAvg, zAvg);
 		myGrid[x][y].setY((float) myNoise.noise(xAvg,zAvg,yAvg));
-	   
+	
 	}
 	public int getMyCol() {
 		return myCol;
@@ -195,6 +196,42 @@ public class Face implements Comparable {
 
 	public ArrayList<Vertex> getMyVertices() {
 		return myVertices;
+	}
+
+	public void addAdjacentFaceForInnerPoints() {
+	    for (int i=1;i<3;i++){
+		for (int j=1;j<3;j++){
+		    Face f=new Face();
+		    f.addVertex(myGrid[i-1][j-1]);
+		    f.addVertex(myGrid[i][j-1]);
+		    f.addVertex(myGrid[i][j]);
+		    f.addVertex(myGrid[i-1][j]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		    f=new Face();
+		    f.addVertex(myGrid[i][j-1]);
+		    f.addVertex(myGrid[i+1][j-1]);
+		    f.addVertex(myGrid[i+1][j]);
+		    f.addVertex(myGrid[i][j]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		    f=new Face();
+		    f.addVertex(myGrid[i][j]);
+		    f.addVertex(myGrid[i+1][j]);
+		    f.addVertex(myGrid[i+1][j+1]);
+		    f.addVertex(myGrid[i][j+1]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		    f=new Face();
+		    f.addVertex(myGrid[i-1][j]);
+		    f.addVertex(myGrid[i][j]);
+		    f.addVertex(myGrid[i][j+1]);
+		    f.addVertex(myGrid[i-1][j+1]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		}
+	    }
+	    
 	}
 
 }
