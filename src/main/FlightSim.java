@@ -155,8 +155,8 @@ public class FlightSim extends Scene {
 		if (!isCompiled) {
 			gl.glDeleteLists(TERRAIN_ID, 1);
 			gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
-			if (preprocess) pre_drawTerrain(gl,glu,glut);
-			else
+			//if (preprocess) pre_drawTerrain(gl,glu,glut);
+			//else
 			drawTerrain(gl, glu, glut);
 			gl.glEndList();
 			isCompiled = true;
@@ -250,7 +250,7 @@ public class FlightSim extends Scene {
 			break;
 		case KeyEvent.VK_OPEN_BRACKET:
 			if (myStepSize > 4)
-				myStepSize /= 2;
+			    	myStepSize /= 2;
 			isCompiled = false;
 			break;
 		case KeyEvent.VK_CLOSE_BRACKET:
@@ -309,6 +309,8 @@ public class FlightSim extends Scene {
 	
 	private void pre_drawTerrain(GL2 gl, GLU glu, GLUT glut) {
 		preprocess = false;
+
+		System.out.println("get inside");
 	    	gl.glBegin(myRenderMode);
 		{
 			for (List<Face> faces : myTerrain.getFaces()) {

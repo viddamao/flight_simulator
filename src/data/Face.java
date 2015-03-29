@@ -173,7 +173,7 @@ public class Face implements Comparable {
 	    float yAvg=(myGrid[a1][a2].getY()+myGrid[b1][b2].getY()+myGrid[c1][c2].getY()+myGrid[d1][d2].getY())/4;
 	    float zAvg=(myGrid[a1][a2].getZ()+myGrid[d1][d2].getZ())/2;
 	  
-		myGrid[x][y]=new Vertex(xAvg, 0, zAvg);
+		myGrid[x][y]=new Vertex(xAvg, yAvg, zAvg);
 		myGrid[x][y].setY((float) myNoise.noise(xAvg,zAvg,yAvg));
 	   
 	}
