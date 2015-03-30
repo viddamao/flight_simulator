@@ -50,6 +50,7 @@ public class FlightSim extends Scene {
 	private boolean BANK_LEFT = false;
 	private boolean RESET_VIEW = false;
 	private boolean INIT_DONE = false;
+	private boolean preprocess = true;
 
 	// animation state
 	private float myAngle;
@@ -156,6 +157,8 @@ public class FlightSim extends Scene {
 		if (!isCompiled) {
 			gl.glDeleteLists(TERRAIN_ID, 1);
 			gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
+			//if (preprocess) pre_drawTerrain(gl,glu,glut);
+			//else
 			drawTerrain(gl, glu, glut);
 			gl.glEndList();
 			isCompiled = true;
@@ -249,7 +252,7 @@ public class FlightSim extends Scene {
 			break;
 		case KeyEvent.VK_OPEN_BRACKET:
 			if (myStepSize > 4)
-				myStepSize /= 2;
+			    	myStepSize /= 2;
 			isCompiled = false;
 			break;
 		case KeyEvent.VK_CLOSE_BRACKET:
@@ -299,9 +302,27 @@ public class FlightSim extends Scene {
 		{
 			for (List<Face> faces : myTerrain.getFaces()) {
 				for (Face f : faces) {
-					f.drawFace(gl, glu, glut);
+				    	f.drawFace(gl, glu, glut);
 				}
 			}
+		}
+		gl.glEnd();
+	}
+	
+	private void pre_drawTerrain(GL2 gl, GLU glu, GLUT glut) {
+		preprocess = false;
+
+		System.out.println("get inside");
+	    	gl.glBegin(myRenderMode);
+		{
+			for (List<Face> faces : myTerrain.getFaces()) {
+				for (Face f : faces) {
+				        f.preprocess();
+				        f.addAdjacentFaceForInnerPoints();
+				    	f.drawFacePre(gl, glu, glut);
+				}
+			}
+			System.out.println("out");
 		}
 		gl.glEnd();
 	}

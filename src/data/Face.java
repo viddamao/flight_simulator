@@ -1,6 +1,7 @@
 package data;
 
 import data.Vertex;
+import framework.ImprovedNoise;
 
 import java.util.ArrayList;
 
@@ -17,11 +18,14 @@ public class Face implements Comparable {
 	private int myCol;
 	private int myRow;
 	private Vertex myAnchor;
-
+	private Vertex[][] myGrid;
+	private ImprovedNoise myNoise=new ImprovedNoise();
+	
 	public Face() {
 		myAdjacentFaces = new ArrayList<Face>();
 		myVertices = new ArrayList<Vertex>();
 		myFaceNormal = new float[3];
+		myGrid=new Vertex[5][5];
 	}
 
 	public void addAdjacentFace(Face f) {
@@ -67,7 +71,9 @@ public class Face implements Comparable {
 
 		return myFaceNormal;
 	}
-
+	
+	
+	
 	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
 		// System.out.print("--------------\nDRAWING FACE:\n");
 		for (Vertex v : myVertices) {
@@ -78,9 +84,23 @@ public class Face implements Comparable {
 			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
 		}
 	}
-
+	
+	public void drawFacePre(GL2 gl, GLU glu, GLUT glut) {
+	   	
+	    	for (int i=0;i<5;i++) {
+		    for (int j=0;j<5;j++){
+			float[] normal = myGrid[i][j].getVertexNormal(gl, glu, glut);
+			
+			gl.glNormal3f(normal[0], normal[1], normal[2]);
+			gl.glVertex3f(myGrid[i][j].getX(), myGrid[i][j].getY(), myGrid[i][j].getZ());
+		    }
+	   	}
+	}
+	
+	
 	public int compareTo(Object o) {
 		Face f = (Face) o;
+		if (this.getAnchor()==null) return 0;
 		if (this.getAnchor().getY() > f.getAnchor().getY()) {
 			return -1;
 		} else if (this.getAnchor().getY() < f.getAnchor().getY()) {
@@ -95,7 +115,62 @@ public class Face implements Comparable {
 			}
 		}
 	}
+	
+	public void preprocess(){
+	    myGrid[0][0]=myVertices.get(0);
+	    myGrid[4][0]=myVertices.get(1);
+	    myGrid[4][4]=myVertices.get(2);
+	    myGrid[0][4]=myVertices.get(3);
+	    
+	    //1 pass
+	    diamondSquare(0,0,4,0,4,4,0,4,2,2);
+	    
+	    //2 pass
+	    diamondSquare(0,0,2,2,0,4,2,2,0,2);
+	    diamondSquare(0,0,2,2,4,0,2,2,2,0);
+	    diamondSquare(4,0,2,2,4,4,2,2,4,2);
+	    diamondSquare(4,4,2,2,0,4,2,2,2,4);
+	    
+	    //3 pass
+	    diamondSquare(0,0,2,0,2,2,0,2,1,1);
+	    diamondSquare(2,0,4,0,4,2,2,2,3,1);
+	    diamondSquare(2,2,4,2,4,4,2,4,3,3);
+	    diamondSquare(0,2,2,2,2,4,0,4,1,3);
+	    
+	    //4 pass
+	   
+	    diamondSquare(0,0,1,1,2,0,1,1,1,0);
+	    diamondSquare(2,0,3,1,4,0,3,1,3,0);
+	    
+	    diamondSquare(0,0,1,1,0,2,1,1,0,1);
+	    diamondSquare(2,0,3,1,2,2,1,1,2,1);
+	    diamondSquare(4,0,3,1,4,2,3,1,4,1);
+	   
+	    diamondSquare(1,1,2,2,1,3,0,2,1,2);
+	    diamondSquare(3,1,4,2,3,3,2,2,3,2);
+	    
+	    diamondSquare(0,2,1,3,0,4,1,3,0,3);
+	    diamondSquare(2,2,3,3,2,4,1,3,2,3);
+	    diamondSquare(4,2,3,3,4,4,3,3,4,3);
+	    
+	    diamondSquare(1,3,2,4,1,3,0,4,1,4);
+	    diamondSquare(3,3,4,4,3,3,2,4,3,4);
+	    
+	    
+	}
 
+	/**
+	 * 
+	 */
+	private void diamondSquare(int a1,int a2,int b1,int b2,int c1,int c2,int d1,int d2,int x,int y) {
+	    float xAvg=(myGrid[a1][a2].getX()+myGrid[b1][b2].getX())/2;
+	    float yAvg=(myGrid[a1][a2].getY()+myGrid[b1][b2].getY()+myGrid[c1][c2].getY()+myGrid[d1][d2].getY())/4;
+	    float zAvg=(myGrid[a1][a2].getZ()+myGrid[d1][d2].getZ())/2;
+	  
+		myGrid[x][y]=new Vertex(xAvg, yAvg, zAvg);
+		myGrid[x][y].setY((float) myNoise.noise(xAvg,zAvg,yAvg));
+	
+	}
 	public int getMyCol() {
 		return myCol;
 	}
@@ -114,6 +189,42 @@ public class Face implements Comparable {
 
 	public ArrayList<Vertex> getMyVertices() {
 		return myVertices;
+	}
+
+	public void addAdjacentFaceForInnerPoints() {
+	    for (int i=1;i<3;i++){
+		for (int j=1;j<3;j++){
+		    Face f=new Face();
+		    f.addVertex(myGrid[i-1][j-1]);
+		    f.addVertex(myGrid[i][j-1]);
+		    f.addVertex(myGrid[i][j]);
+		    f.addVertex(myGrid[i-1][j]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		    f=new Face();
+		    f.addVertex(myGrid[i][j-1]);
+		    f.addVertex(myGrid[i+1][j-1]);
+		    f.addVertex(myGrid[i+1][j]);
+		    f.addVertex(myGrid[i][j]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		    f=new Face();
+		    f.addVertex(myGrid[i][j]);
+		    f.addVertex(myGrid[i+1][j]);
+		    f.addVertex(myGrid[i+1][j+1]);
+		    f.addVertex(myGrid[i][j+1]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		    f=new Face();
+		    f.addVertex(myGrid[i-1][j]);
+		    f.addVertex(myGrid[i][j]);
+		    f.addVertex(myGrid[i][j+1]);
+		    f.addVertex(myGrid[i-1][j+1]);
+		    myGrid[i][j].addSharedFace(f);
+		    
+		}
+	    }
+	    
 	}
 
 }

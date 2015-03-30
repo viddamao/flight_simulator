@@ -13,7 +13,6 @@ public class Terrain {
 	private List<List<Face>> myFaces;
 	private List<List<Vertex>> myVertices;
 	private int myStepSize;
-	private int _DS_PASSES = 3;
 
 	protected Terrain() {}
 	
@@ -122,6 +121,8 @@ public class Terrain {
 		return adjacentFaces;
 
 	}
+	
+	
 	
 	public List<List<Face>> getFaces() {
 		return myFaces;
