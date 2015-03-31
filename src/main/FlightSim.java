@@ -91,7 +91,7 @@ public class FlightSim extends Scene {
 	private ArrayList<List<Face>> myFaces;
 	private Pixmap myHeightMap;
 	
-	private String myModelFile = "models/vp_data/vp4009-Dragon.obj";
+	private String myModelFile = "models/vp_data/vp5444-SpaceShuttle.obj";
 	private OBJModel myModel;
 	private float x,y,z;
 	
@@ -220,6 +220,7 @@ public class FlightSim extends Scene {
 		gl.glTranslatef(x,y,z);
 		//glut.glutSolidCube(1);
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, myRenderMode);
+		gl.glScalef(2, 2, 2);
         myModel.render(gl);
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		gl.glPopMatrix();
