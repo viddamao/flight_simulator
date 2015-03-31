@@ -81,8 +81,7 @@ public class FlightSim extends Scene {
 	private boolean BANK_LEFT = false;
 	private boolean RESET_VIEW = false;
 	private boolean INIT_DONE = false;
-	private boolean preprocess = true;
-
+	
 	// animation state
 	private float myAngle;
 	private float myScale;
@@ -210,22 +209,23 @@ public class FlightSim extends Scene {
 			gl.glEndList();
 			isCompiled = true;
 		}
-		gl.glPushMatrix();
-		//myCurve.draw(gl, myResolution);
-	        // draw control points
-	        
-		gl.glTranslatef(x,y,z);
 
+
+		gl.glPushMatrix();
+		gl.glTranslatef(x,y,z);
 		glut.glutSolidCube(1);
-	        //float[] pt = myCurve.evaluateAt(myTime);
-	        //gl.glTranslatef(pt[0], pt[1], pt[2]);
-		
-		//glTranslatef(small_cube_xyz[0],small_cube_xyz[1],small_cube_xyz[2]);
-		//glRotatef(small_cube_rotation[0], 1,0,0);
-		 
-		//if (small_cube == 1) Draw_small_cube();
-		 
 		gl.glPopMatrix();
+		
+		
+		//gl.glPushMatrix();
+		//myCurve.draw(gl, myResolution);
+		//float[] pt = myCurve.evaluateAt(myTime);
+	        //gl.glTranslatef(pt[0], pt[1], pt[2]);
+		//gl.glPopMatrix();
+		
+		
+		 
+		
 		
 	        
 		gl.glScalef(myScale, myScale * HEIGHT_RATIO, myScale);
