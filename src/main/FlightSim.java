@@ -116,6 +116,9 @@ public class FlightSim extends Scene {
 	/**
 	 * Initialize general OpenGL values once (in place of constructor).
 	 */
+	/* (non-Javadoc)
+	 * @see framework.Scene#init(javax.media.opengl.GL2, javax.media.opengl.glu.GLU, com.jogamp.opengl.util.gl2.GLUT)
+	 */
 	@Override
 	public void init(GL2 gl, GLU glu, GLUT glut) {
 		myFaces = new ArrayList<List<Face>>();
@@ -139,10 +142,10 @@ public class FlightSim extends Scene {
 
 
 	     gl.glEnable(GL2.GL_MAP1_VERTEX_3);	
-		 myCurve = new Spline();
-		 for (int k = 0; k < CONTROL_POINTS.length; k += 3) {
-		     myCurve.addPoint(CONTROL_POINTS[k], CONTROL_POINTS[k+1], CONTROL_POINTS[k+2]);
-		 }
+		 myCurve = new Spline(CONTROL_POINTS);
+		// for (int k = 0; k < CONTROL_POINTS.length; k += 3) {
+		 //    myCurve.addPoint(CONTROL_POINTS[k], CONTROL_POINTS[k+1], CONTROL_POINTS[k+2]);
+		 //}
 		        
 		//createSkybox();
 		// make all normals unit length
@@ -226,7 +229,7 @@ public class FlightSim extends Scene {
 		//glut.glutSolidCube(1);
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, myRenderMode);
 		gl.glScalef(2, 2, 2);
-        myModel.render(gl);
+		myModel.render(gl);
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		    gl.glPopMatrix();
 		}
