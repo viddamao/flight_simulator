@@ -36,21 +36,21 @@ import framework.Spline;
 public class FlightSim extends Scene {
 
     private float[] CONTROL_POINTS = {
-	         -1,  0,  1,
-	          0, -2,  2,
-	          3,  0,  2,
-	          0,  4,  3,
-	          5,  0,  2,
-	          0,  6,  2,
-	          6,  3,  1,
-	          5,  5,  -1,
-	          3,  3,  0,
-	          1,  6,  0,
-	          5,  0,  2,
-	          1,  4,  1,
-	          3,  0,  0,
-	          1, -2,  -1,
-	          1,  0,  0
+	         -1,  0,  5,
+	          0, -2,  10,
+	          3,  0,  15,
+	          0,  4,  20,
+	          5,  0,  20,
+	          0,  2,  25,
+	          6,  3,  30,
+	          5,  5,  25,
+	          3,  3,  20,
+	          1,  2,  10,
+	          5,  0,  12,
+	          1,  4,  13,
+	          3,  0,  15,
+	          1, -2,  10,
+	          1,  0,  5
 	    };
 
     	private Spline myCurve;
@@ -73,6 +73,7 @@ public class FlightSim extends Scene {
 	private static final float SPEED_INCREMENT = 0.02f;
 	private final float DEFAULT_FLIGHT_SPEED = 0.01f;
 	private float FLIGHT_SPEED = 0.01f;
+	private float CURRENT_SPEED= 0.01f;
 	private boolean TILT_RIGHT = false;
 	private boolean TILT_LEFT = false;
 	private boolean OBJECT_ASCEND = false;
@@ -81,6 +82,7 @@ public class FlightSim extends Scene {
 	private boolean BANK_LEFT = false;
 	private boolean RESET_VIEW = false;
 	private boolean INIT_DONE = false;
+	private boolean INTERACTIVE_MODE = false;
 	
 	// animation state
 	private float myAngle;
@@ -97,6 +99,7 @@ public class FlightSim extends Scene {
 	
 	// terrain
 	private Terrain myTerrain;
+
 
 	public FlightSim(String[] args) {
 		super("Flight Simulator");
@@ -212,21 +215,17 @@ public class FlightSim extends Scene {
 
 		
 		//myCurve.draw(gl, myResolution);
-		
-		gl.glPushMatrix();
-
-		float[] pt = myCurve.evaluateAt(myTime);
-	        gl.glTranslatef(pt[0], pt[1], pt[2]);
-		gl.glTranslatef(x,y,z);
-		glut.glutSolidCube(1);
-		gl.glPopMatrix();
-		
-		
-		
-		
-		 
-		
-		
+		if (INTERACTIVE_MODE){
+		    float[] pt = myCurve.evaluateAt(myTime);
+		    gl.glTranslatef(-pt[0], -pt[1], -pt[2]);
+		    gl.glTranslatef(0,-5,-8);
+		    
+		    gl.glPushMatrix();
+		    	gl.glTranslatef(pt[0], pt[1], pt[2]);
+		    	gl.glTranslatef(0,8,-5);
+		    	glut.glutSolidCube(1);
+		    gl.glPopMatrix();
+		}
 	        
 		gl.glScalef(myScale, myScale * HEIGHT_RATIO, myScale);
 		gl.glCallList(TERRAIN_ID);
@@ -243,28 +242,28 @@ public class FlightSim extends Scene {
 		}
 		if (RESET_VIEW) {
 			gl.glPopMatrix();
+			myTime = 0;
+			x = 0;
+			y = 5;
+			z = -20;
 			RESET_VIEW = false;
 			INIT_DONE = false;
 		}
 
 		if (BANK_RIGHT) {
 			gl.glRotatef(0.25f, 0, 1, 0);
-			x -= 0.1;
 			BANK_RIGHT = false;
 		}
 		if (BANK_LEFT) {
 			gl.glRotatef(-0.25f, 0, 1, 0);
-			x += 0.1;
 			BANK_LEFT = false;
 		}
 		if (OBJECT_ASCEND) {
 			gl.glRotatef(-0.25f, 1, 0, 0);
-			y += 0.1;
 			OBJECT_ASCEND = false;
 		}
 		if (OBJECT_DESCEND) {
 			gl.glRotatef(0.25f, 1, 0, 0);
-			y -= 0.1;
 			OBJECT_DESCEND = false;
 		}
 		if (TILT_RIGHT) {
@@ -276,10 +275,12 @@ public class FlightSim extends Scene {
 			TILT_LEFT = false;
 		}
 
-
+		if (!INTERACTIVE_MODE)
 		gl.glTranslatef(0, 0, FLIGHT_SPEED);
-		z+=FLIGHT_SPEED;
-	        myTime += FLIGHT_SPEED;
+		else{
+		    
+	            myTime += CURRENT_SPEED;
+		}
 	}
 
 	/**
@@ -311,7 +312,11 @@ public class FlightSim extends Scene {
 	 */
 	@Override
 	public void keyPressed(int keyCode) {
-		switch (keyCode) {
+		if (!INTERACTIVE_MODE)
+	    	switch (keyCode) {
+	    	case KeyEvent.VK_O:
+			INTERACTIVE_MODE = true;
+			break;
 		case KeyEvent.VK_A:
 			myRenderMode = ((myRenderMode == GL2.GL_QUADS) ? GL2.GL_LINES
 					: GL2.GL_QUADS);
@@ -368,6 +373,68 @@ public class FlightSim extends Scene {
 			System.exit(1);
 			break;
 		}
+		else
+		    switch (keyCode) {
+			case KeyEvent.VK_A:
+				myRenderMode = ((myRenderMode == GL2.GL_QUADS) ? GL2.GL_LINES
+						: GL2.GL_QUADS);
+				isCompiled = false;
+				break;
+			case KeyEvent.VK_PERIOD:
+				myScale += 0.01f;
+				break;
+			case KeyEvent.VK_COMMA:
+				myScale -= 0.01f;
+				break;
+			case KeyEvent.VK_OPEN_BRACKET:
+				if (myStepSize > 4)
+				    	myStepSize /= 2;
+				isCompiled = false;
+				break;
+			case KeyEvent.VK_CLOSE_BRACKET:
+				if (myStepSize < (myHeightMap.getSize().width / 2))
+					myStepSize *= 2;
+				isCompiled = false;
+				break;
+			case KeyEvent.VK_UP:
+			        CURRENT_SPEED += SPEED_INCREMENT;
+				break;
+			case KeyEvent.VK_DOWN:
+			        CURRENT_SPEED -= SPEED_INCREMENT;
+				break;
+			case KeyEvent.VK_X:
+				TILT_RIGHT = true;
+				break;
+			case KeyEvent.VK_Z:
+				TILT_LEFT = true;
+				break;
+			case KeyEvent.VK_O:
+				INTERACTIVE_MODE = false;
+				break;
+				
+			case KeyEvent.VK_U:
+				OBJECT_ASCEND = true;
+				break;
+			case KeyEvent.VK_I:
+				OBJECT_DESCEND = true;
+				break;
+			case KeyEvent.VK_RIGHT:
+				BANK_RIGHT = true;
+				break;
+			case KeyEvent.VK_LEFT:
+				BANK_LEFT = true;
+				break;
+			case KeyEvent.VK_R:
+				RESET_VIEW = true;
+				FLIGHT_SPEED = DEFAULT_FLIGHT_SPEED;
+				break;
+			case KeyEvent.VK_Q:
+				JOptionPane.showMessageDialog(null,
+						"Thanks for using the FlightSim", "Message",
+						JOptionPane.INFORMATION_MESSAGE);
+				System.exit(1);
+				break;
+			}  
 	}
 
 	private void drawTerrain(GL2 gl, GLU glu, GLUT glut) {
