@@ -36,21 +36,21 @@ import framework.Spline;
 public class FlightSim extends Scene {
 
     private float[] CONTROL_POINTS = {
-	         -1,  0,  0,
-	          0, -2,  0,
+	         -1,  0,  1,
+	          0, -2,  2,
+	          3,  0,  2,
+	          0,  4,  3,
+	          5,  0,  2,
+	          0,  6,  2,
+	          6,  3,  1,
+	          5,  5,  -1,
+	          3,  3,  0,
+	          1,  6,  0,
+	          5,  0,  2,
+	          1,  4,  1,
 	          3,  0,  0,
-	          0,  4,  0,
-	         -5,  0,  0,
-	          0, -6,  0,
-	          6, -3,  0,
-	         50,  5,  0,
-	         94, -3,  0,
-	        100, -6,  0,
-	        105,  0,  0,
-	        100,  4,  0,
-	         97,  0,  0,
-	        100, -2,  0,
-	        101,  0,  0
+	          1, -2,  -1,
+	          1,  0,  0
 	    };
 
     	private Spline myCurve;
@@ -210,18 +210,18 @@ public class FlightSim extends Scene {
 			isCompiled = true;
 		}
 
-
+		
+		//myCurve.draw(gl, myResolution);
+		
 		gl.glPushMatrix();
+
+		float[] pt = myCurve.evaluateAt(myTime);
+	        gl.glTranslatef(pt[0], pt[1], pt[2]);
 		gl.glTranslatef(x,y,z);
 		glut.glutSolidCube(1);
 		gl.glPopMatrix();
 		
 		
-		//gl.glPushMatrix();
-		//myCurve.draw(gl, myResolution);
-		//float[] pt = myCurve.evaluateAt(myTime);
-	        //gl.glTranslatef(pt[0], pt[1], pt[2]);
-		//gl.glPopMatrix();
 		
 		
 		 
