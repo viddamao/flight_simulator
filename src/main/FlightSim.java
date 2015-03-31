@@ -1,5 +1,6 @@
 package main;
 
+
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -22,8 +23,10 @@ import data.Face;
 import data.Terrain;
 import data.Vertex;
 import framework.JOGLFrame;
+import framework.OBJModel;
 import framework.Pixmap;
 import framework.Scene;
+import framework.Spline;
 
 /**
  * Display a simple scene to demonstrate OpenGL.
@@ -32,6 +35,34 @@ import framework.Scene;
  */
 public class FlightSim extends Scene {
 
+    private float[] CONTROL_POINTS = {
+	         -1,  0,  0,
+	          0, -2,  0,
+	          3,  0,  0,
+	          0,  4,  0,
+	         -5,  0,  0,
+	          0, -6,  0,
+	          6, -3,  0,
+	         50,  5,  0,
+	         94, -3,  0,
+	        100, -6,  0,
+	        105,  0,  0,
+	        100,  4,  0,
+	         97,  0,  0,
+	        100, -2,  0,
+	        101,  0,  0
+	    };
+
+    	private Spline myCurve;
+
+        private float myTime;
+        private float myResolution;
+        
+    	private static final float[] X_AXIS = { 1, 0, 0 };
+    	private static final float[] Y_AXIS = { 0, 1, 0 };
+    	private static final float[] Z_AXIS = { 0, 0, 1 };
+        private float[] myAxis;
+    
 	private static JFrame myFrame;
 	private static Scene myScene;
 	private final String DEFAULT_MAP_FILE = "images/sierra_elev.jpg";
@@ -60,7 +91,11 @@ public class FlightSim extends Scene {
 	private boolean isCompiled;
 	private ArrayList<List<Face>> myFaces;
 	private Pixmap myHeightMap;
-
+	
+	private String myModelFile = "models/vp_data/vp4009-Dragon.obj";
+	private OBJModel myModel;
+	private float x,y,z;
+	
 	// terrain
 	private Terrain myTerrain;
 
@@ -87,13 +122,26 @@ public class FlightSim extends Scene {
 		myScale = 0.05f;
 		myStepSize = 1;
 		isCompiled = false;
+		//myModel = new OBJModel(myModelFile);
 
+		myTime = 0;
+		x = 0;
+		y = 5;
+		z = -20;
+		
 		myRenderMode = GL2.GL_QUADS;
 
 		myTerrain = Terrain.getTerrain();
 		myTerrain.init(myHeightMap, myStepSize);
 		myTerrain.build();
 
+
+	        gl.glEnable(GL2.GL_MAP1_VERTEX_3);	
+		 myCurve = new Spline();
+		 for (int k = 0; k < CONTROL_POINTS.length; k += 3) {
+		     myCurve.addPoint(CONTROL_POINTS[k], CONTROL_POINTS[k+1], CONTROL_POINTS[k+2]);
+		 }
+		        
 		//createSkybox();
 		// make all normals unit length
 		gl.glEnable(GL2.GL_NORMALIZE);
@@ -157,12 +205,29 @@ public class FlightSim extends Scene {
 		if (!isCompiled) {
 			gl.glDeleteLists(TERRAIN_ID, 1);
 			gl.glNewList(TERRAIN_ID, GL2.GL_COMPILE);
-			//if (preprocess) pre_drawTerrain(gl,glu,glut);
-			//else
+
 			drawTerrain(gl, glu, glut);
 			gl.glEndList();
 			isCompiled = true;
 		}
+		gl.glPushMatrix();
+		//myCurve.draw(gl, myResolution);
+	        // draw control points
+	        
+		gl.glTranslatef(x,y,z);
+
+		glut.glutSolidCube(1);
+	        //float[] pt = myCurve.evaluateAt(myTime);
+	        //gl.glTranslatef(pt[0], pt[1], pt[2]);
+		
+		//glTranslatef(small_cube_xyz[0],small_cube_xyz[1],small_cube_xyz[2]);
+		//glRotatef(small_cube_rotation[0], 1,0,0);
+		 
+		//if (small_cube == 1) Draw_small_cube();
+		 
+		gl.glPopMatrix();
+		
+	        
 		gl.glScalef(myScale, myScale * HEIGHT_RATIO, myScale);
 		gl.glCallList(TERRAIN_ID);
 	}
@@ -176,7 +241,6 @@ public class FlightSim extends Scene {
 			gl.glPushMatrix();
 			INIT_DONE = true;
 		}
-		gl.glTranslatef(0, 0, FLIGHT_SPEED);
 		if (RESET_VIEW) {
 			gl.glPopMatrix();
 			RESET_VIEW = false;
@@ -185,18 +249,22 @@ public class FlightSim extends Scene {
 
 		if (BANK_RIGHT) {
 			gl.glRotatef(0.25f, 0, 1, 0);
+			x -= 0.1;
 			BANK_RIGHT = false;
 		}
 		if (BANK_LEFT) {
 			gl.glRotatef(-0.25f, 0, 1, 0);
+			x += 0.1;
 			BANK_LEFT = false;
 		}
 		if (OBJECT_ASCEND) {
 			gl.glRotatef(-0.25f, 1, 0, 0);
+			y += 0.1;
 			OBJECT_ASCEND = false;
 		}
 		if (OBJECT_DESCEND) {
 			gl.glRotatef(0.25f, 1, 0, 0);
+			y -= 0.1;
 			OBJECT_DESCEND = false;
 		}
 		if (TILT_RIGHT) {
@@ -207,6 +275,11 @@ public class FlightSim extends Scene {
 			gl.glRotatef(-0.25f, 0, 0, 1);
 			TILT_LEFT = false;
 		}
+
+
+		gl.glTranslatef(0, 0, FLIGHT_SPEED);
+		z+=FLIGHT_SPEED;
+	        myTime += FLIGHT_SPEED;
 	}
 
 	/**
@@ -309,23 +382,6 @@ public class FlightSim extends Scene {
 		gl.glEnd();
 	}
 	
-	private void pre_drawTerrain(GL2 gl, GLU glu, GLUT glut) {
-		preprocess = false;
-
-		System.out.println("get inside");
-	    	gl.glBegin(myRenderMode);
-		{
-			for (List<Face> faces : myTerrain.getFaces()) {
-				for (Face f : faces) {
-				        f.preprocess();
-				        f.addAdjacentFaceForInnerPoints();
-				    	f.drawFacePre(gl, glu, glut);
-				}
-			}
-			System.out.println("out");
-		}
-		gl.glEnd();
-	}
 
 	public static void main(String[] args) {
 		myScene = new FlightSim(args);

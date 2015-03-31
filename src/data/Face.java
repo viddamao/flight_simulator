@@ -18,14 +18,14 @@ public class Face implements Comparable {
 	private int myCol;
 	private int myRow;
 	private Vertex myAnchor;
-	private Vertex[][] myGrid;
+	private Vertex[][] myGrid=new Vertex[5][5];
 	private ImprovedNoise myNoise=new ImprovedNoise();
 	
 	public Face() {
 		myAdjacentFaces = new ArrayList<Face>();
 		myVertices = new ArrayList<Vertex>();
 		myFaceNormal = new float[3];
-		myGrid=new Vertex[5][5];
+
 	}
 
 	public void addAdjacentFace(Face f) {
@@ -100,7 +100,6 @@ public class Face implements Comparable {
 	
 	public int compareTo(Object o) {
 		Face f = (Face) o;
-		if (this.getAnchor()==null) return 0;
 		if (this.getAnchor().getY() > f.getAnchor().getY()) {
 			return -1;
 		} else if (this.getAnchor().getY() < f.getAnchor().getY()) {
