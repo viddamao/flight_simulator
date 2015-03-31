@@ -121,7 +121,7 @@ public class FlightSim extends Scene {
 		myScale = 0.05f;
 		myStepSize = 1;
 		isCompiled = false;
-		//myModel = new OBJModel(myModelFile);
+		myModel = new OBJModel(myModelFile);
 
 		myTime = 0;
 		x = 0;
@@ -135,7 +135,7 @@ public class FlightSim extends Scene {
 		myTerrain.build();
 
 
-	        gl.glEnable(GL2.GL_MAP1_VERTEX_3);	
+	     gl.glEnable(GL2.GL_MAP1_VERTEX_3);	
 		 myCurve = new Spline();
 		 for (int k = 0; k < CONTROL_POINTS.length; k += 3) {
 		     myCurve.addPoint(CONTROL_POINTS[k], CONTROL_POINTS[k+1], CONTROL_POINTS[k+2]);
@@ -216,15 +216,13 @@ public class FlightSim extends Scene {
 		gl.glPushMatrix();
 
 		float[] pt = myCurve.evaluateAt(myTime);
-	        gl.glTranslatef(pt[0], pt[1], pt[2]);
+		gl.glTranslatef(pt[0], pt[1], pt[2]);
 		gl.glTranslatef(x,y,z);
-		glut.glutSolidCube(1);
+		//glut.glutSolidCube(1);
+		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, myRenderMode);
+        myModel.render(gl);
+        gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		gl.glPopMatrix();
-		
-		
-		
-		
-		 
 		
 		
 	        
