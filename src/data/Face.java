@@ -1,8 +1,5 @@
 package data;
 
-import data.Vertex;
-import framework.ImprovedNoise;
-
 import java.util.ArrayList;
 
 import javax.media.opengl.GL2;
@@ -10,220 +7,222 @@ import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 
+import framework.ImprovedNoise;
+
 public class Face implements Comparable {
 
-	private ArrayList<Face> myAdjacentFaces;
-	private ArrayList<Vertex> myVertices;
-	private float[] myFaceNormal;
-	private int myCol;
-	private int myRow;
-	private Vertex myAnchor;
-	private Vertex[][] myGrid=new Vertex[5][5];
-	private ImprovedNoise myNoise=new ImprovedNoise();
-	
-	public Face() {
-		myAdjacentFaces = new ArrayList<Face>();
-		myVertices = new ArrayList<Vertex>();
-		myFaceNormal = new float[3];
+    private ArrayList<Face> myAdjacentFaces;
+    private ArrayList<Vertex> myVertices;
+    private float[] myFaceNormal;
+    private int myCol;
+    private int myRow;
+    private Vertex myAnchor;
+    private Vertex[][] myGrid = new Vertex[5][5];
+    private ImprovedNoise myNoise = new ImprovedNoise();
 
-	}
+    public Face() {
+	myAdjacentFaces = new ArrayList<Face>();
+	myVertices = new ArrayList<Vertex>();
+	myFaceNormal = new float[3];
 
-	public void addAdjacentFace(Face f) {
-		if (f != null) {
-			myAdjacentFaces.add(f);
-		}
-	}
+    }
 
-	public void addVertex(Vertex v) {
-		myVertices.add(v);
+    public void addAdjacentFace(Face f) {
+	if (f != null) {
+	    myAdjacentFaces.add(f);
 	}
+    }
 
-	public void setAnchor(Vertex v) {
-		myAnchor = v;
-	}
+    public void addVertex(Vertex v) {
+	myVertices.add(v);
+    }
 
-	public Vertex getAnchor() {
-		return myAnchor;
-	}
+    public void setAnchor(Vertex v) {
+	myAnchor = v;
+    }
 
-	public float[] calculateFaceNormal(GL2 gl, GLU glu, GLUT glut) {
-		Vertex v0 = myVertices.get(0);
-		Vertex v1 = myVertices.get(1);
-		Vertex v2 = myVertices.get(2);
-		Vertex v3 = myVertices.get(3);
+    public Vertex getAnchor() {
+	return myAnchor;
+    }
 
-		float nx = (v0.getY() - v1.getY()) * (v0.getZ() + v1.getZ())
-				+ (v1.getY() - v2.getY()) * (v1.getZ() + v2.getZ())
-				+ (v2.getY() - v3.getY()) * (v2.getZ() + v3.getZ())
-				+ (v3.getY() - v0.getY()) * (v3.getZ() + v0.getZ());
-		float ny = (v0.getZ() - v1.getZ()) * (v0.getX() + v1.getX())
-				+ (v1.getZ() - v2.getZ()) * (v1.getX() + v2.getX())
-				+ (v2.getZ() - v3.getZ()) * (v2.getX() + v3.getX())
-				+ (v3.getZ() - v0.getZ()) * (v3.getX() + v0.getX());
-		float nz = (v0.getX() - v1.getX()) * (v0.getY() + v1.getY())
-				+ (v1.getX() - v2.getX()) * (v1.getY() + v2.getY())
-				+ (v2.getX() - v3.getX()) * (v2.getY() + v3.getY())
-				+ (v3.getX() - v0.getX()) * (v3.getY() + v0.getY());
+    public float[] calculateFaceNormal(GL2 gl, GLU glu, GLUT glut) {
+	Vertex v0 = myVertices.get(0);
+	Vertex v1 = myVertices.get(1);
+	Vertex v2 = myVertices.get(2);
+	Vertex v3 = myVertices.get(3);
 
-		myFaceNormal[0] = nx;
-		myFaceNormal[1] = ny;
-		myFaceNormal[2] = nz;
+	float nx = (v0.getY() - v1.getY()) * (v0.getZ() + v1.getZ())
+		+ (v1.getY() - v2.getY()) * (v1.getZ() + v2.getZ())
+		+ (v2.getY() - v3.getY()) * (v2.getZ() + v3.getZ())
+		+ (v3.getY() - v0.getY()) * (v3.getZ() + v0.getZ());
+	float ny = (v0.getZ() - v1.getZ()) * (v0.getX() + v1.getX())
+		+ (v1.getZ() - v2.getZ()) * (v1.getX() + v2.getX())
+		+ (v2.getZ() - v3.getZ()) * (v2.getX() + v3.getX())
+		+ (v3.getZ() - v0.getZ()) * (v3.getX() + v0.getX());
+	float nz = (v0.getX() - v1.getX()) * (v0.getY() + v1.getY())
+		+ (v1.getX() - v2.getX()) * (v1.getY() + v2.getY())
+		+ (v2.getX() - v3.getX()) * (v2.getY() + v3.getY())
+		+ (v3.getX() - v0.getX()) * (v3.getY() + v0.getY());
 
-		return myFaceNormal;
-	}
-	
-	
-	
-	public void drawFace(GL2 gl, GLU glu, GLUT glut) {
-		// System.out.print("--------------\nDRAWING FACE:\n");
-		for (Vertex v : myVertices) {
-			float[] normal = v.getVertexNormal(gl, glu, glut);
-			float z = v.getY();
-	        gl.glColor3f((z/255) * .64f, (z/255) * .16f, (z/255) * .16f);
-			gl.glNormal3f(normal[0], normal[1], normal[2]);
-			gl.glVertex3f(v.getX(), v.getY(), v.getZ());
-		}
-	}
-	
-	public void drawFacePre(GL2 gl, GLU glu, GLUT glut) {
-	   	
-	    	for (int i=0;i<5;i++) {
-		    for (int j=0;j<5;j++){
-			float[] normal = myGrid[i][j].getVertexNormal(gl, glu, glut);
-			
-			gl.glNormal3f(normal[0], normal[1], normal[2]);
-			gl.glVertex3f(myGrid[i][j].getX(), myGrid[i][j].getY(), myGrid[i][j].getZ());
-		    }
-	   	}
-	}
-	
-	
-	public int compareTo(Object o) {
-		Face f = (Face) o;
-		if (this.getAnchor().getY() > f.getAnchor().getY()) {
-			return -1;
-		} else if (this.getAnchor().getY() < f.getAnchor().getY()) {
-			return 1;
-		} else {
-			if (this.getAnchor().getX() > f.getAnchor().getX()) {
-				return -1;
-			} else if (this.getAnchor().getX() < f.getAnchor().getX()) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-	}
-	
-	public void preprocess(){
-	    myGrid[0][0]=myVertices.get(0);
-	    myGrid[4][0]=myVertices.get(1);
-	    myGrid[4][4]=myVertices.get(2);
-	    myGrid[0][4]=myVertices.get(3);
-	    
-	    //1 pass
-	    diamondSquare(0,0,4,0,4,4,0,4,2,2);
-	    
-	    //2 pass
-	    diamondSquare(0,0,2,2,0,4,2,2,0,2);
-	    diamondSquare(0,0,2,2,4,0,2,2,2,0);
-	    diamondSquare(4,0,2,2,4,4,2,2,4,2);
-	    diamondSquare(4,4,2,2,0,4,2,2,2,4);
-	    
-	    //3 pass
-	    diamondSquare(0,0,2,0,2,2,0,2,1,1);
-	    diamondSquare(2,0,4,0,4,2,2,2,3,1);
-	    diamondSquare(2,2,4,2,4,4,2,4,3,3);
-	    diamondSquare(0,2,2,2,2,4,0,4,1,3);
-	    
-	    //4 pass
-	   
-	    diamondSquare(0,0,1,1,2,0,1,1,1,0);
-	    diamondSquare(2,0,3,1,4,0,3,1,3,0);
-	    
-	    diamondSquare(0,0,1,1,0,2,1,1,0,1);
-	    diamondSquare(2,0,3,1,2,2,1,1,2,1);
-	    diamondSquare(4,0,3,1,4,2,3,1,4,1);
-	   
-	    diamondSquare(1,1,2,2,1,3,0,2,1,2);
-	    diamondSquare(3,1,4,2,3,3,2,2,3,2);
-	    
-	    diamondSquare(0,2,1,3,0,4,1,3,0,3);
-	    diamondSquare(2,2,3,3,2,4,1,3,2,3);
-	    diamondSquare(4,2,3,3,4,4,3,3,4,3);
-	    
-	    diamondSquare(1,3,2,4,1,3,0,4,1,4);
-	    diamondSquare(3,3,4,4,3,3,2,4,3,4);
-	    
-	    
-	}
+	myFaceNormal[0] = nx;
+	myFaceNormal[1] = ny;
+	myFaceNormal[2] = nz;
 
-	/**
-	 * 
-	 */
-	private void diamondSquare(int a1,int a2,int b1,int b2,int c1,int c2,int d1,int d2,int x,int y) {
-	    float xAvg=(myGrid[a1][a2].getX()+myGrid[b1][b2].getX())/2;
-	    float yAvg=(myGrid[a1][a2].getY()+myGrid[b1][b2].getY()+myGrid[c1][c2].getY()+myGrid[d1][d2].getY())/4;
-	    float zAvg=(myGrid[a1][a2].getZ()+myGrid[d1][d2].getZ())/2;
-	  
-		myGrid[x][y]=new Vertex(xAvg, yAvg, zAvg);
-		myGrid[x][y].setY((float) myNoise.noise(xAvg,zAvg,yAvg));
-	
-	}
-	public int getMyCol() {
-		return myCol;
-	}
+	return myFaceNormal;
+    }
 
-	public void setMyCol(int myCol) {
-		this.myCol = myCol;
+    public void drawFace(GL2 gl, GLU glu, GLUT glut) {
+	// System.out.print("--------------\nDRAWING FACE:\n");
+	for (Vertex v : myVertices) {
+	    float[] normal = v.getVertexNormal(gl, glu, glut);
+	    float z = v.getY();
+	    gl.glColor3f((z / 255) * .64f, (z / 255) * .16f, (z / 255) * .16f);
+	    gl.glNormal3f(normal[0], normal[1], normal[2]);
+	    gl.glVertex3f(v.getX(), v.getY(), v.getZ());
 	}
+    }
 
-	public int getMyRow() {
-		return myRow;
-	}
+    public void drawFacePre(GL2 gl, GLU glu, GLUT glut) {
 
-	public void setMyRow(int myRow) {
-		this.myRow = myRow;
-	}
+	for (int i = 0; i < 5; i++) {
+	    for (int j = 0; j < 5; j++) {
+		float[] normal = myGrid[i][j].getVertexNormal(gl, glu, glut);
 
-	public ArrayList<Vertex> getMyVertices() {
-		return myVertices;
-	}
-
-	public void addAdjacentFaceForInnerPoints() {
-	    for (int i=1;i<3;i++){
-		for (int j=1;j<3;j++){
-		    Face f=new Face();
-		    f.addVertex(myGrid[i-1][j-1]);
-		    f.addVertex(myGrid[i][j-1]);
-		    f.addVertex(myGrid[i][j]);
-		    f.addVertex(myGrid[i-1][j]);
-		    myGrid[i][j].addSharedFace(f);
-		    
-		    f=new Face();
-		    f.addVertex(myGrid[i][j-1]);
-		    f.addVertex(myGrid[i+1][j-1]);
-		    f.addVertex(myGrid[i+1][j]);
-		    f.addVertex(myGrid[i][j]);
-		    myGrid[i][j].addSharedFace(f);
-		    
-		    f=new Face();
-		    f.addVertex(myGrid[i][j]);
-		    f.addVertex(myGrid[i+1][j]);
-		    f.addVertex(myGrid[i+1][j+1]);
-		    f.addVertex(myGrid[i][j+1]);
-		    myGrid[i][j].addSharedFace(f);
-		    
-		    f=new Face();
-		    f.addVertex(myGrid[i-1][j]);
-		    f.addVertex(myGrid[i][j]);
-		    f.addVertex(myGrid[i][j+1]);
-		    f.addVertex(myGrid[i-1][j+1]);
-		    myGrid[i][j].addSharedFace(f);
-		    
-		}
+		gl.glNormal3f(normal[0], normal[1], normal[2]);
+		gl.glVertex3f(myGrid[i][j].getX(), myGrid[i][j].getY(),
+			myGrid[i][j].getZ());
 	    }
-	    
 	}
+    }
+
+    @Override
+    public int compareTo(Object o) {
+	Face f = (Face) o;
+	if (getAnchor().getY() > f.getAnchor().getY())
+	    return -1;
+	else if (getAnchor().getY() < f.getAnchor().getY())
+	    return 1;
+	else {
+	    if (getAnchor().getX() > f.getAnchor().getX())
+		return -1;
+	    else if (getAnchor().getX() < f.getAnchor().getX())
+		return 1;
+	    else
+		return 0;
+	}
+    }
+
+    public void preprocess() {
+	myGrid[0][0] = myVertices.get(0);
+	myGrid[4][0] = myVertices.get(1);
+	myGrid[4][4] = myVertices.get(2);
+	myGrid[0][4] = myVertices.get(3);
+
+	// 1 pass
+	diamondSquare(0, 0, 4, 0, 4, 4, 0, 4, 2, 2);
+
+	// 2 pass
+	diamondSquare(0, 0, 2, 2, 0, 4, 2, 2, 0, 2);
+	diamondSquare(0, 0, 2, 2, 4, 0, 2, 2, 2, 0);
+	diamondSquare(4, 0, 2, 2, 4, 4, 2, 2, 4, 2);
+	diamondSquare(4, 4, 2, 2, 0, 4, 2, 2, 2, 4);
+
+	// 3 pass
+	diamondSquare(0, 0, 2, 0, 2, 2, 0, 2, 1, 1);
+	diamondSquare(2, 0, 4, 0, 4, 2, 2, 2, 3, 1);
+	diamondSquare(2, 2, 4, 2, 4, 4, 2, 4, 3, 3);
+	diamondSquare(0, 2, 2, 2, 2, 4, 0, 4, 1, 3);
+
+	// 4 pass
+
+	diamondSquare(0, 0, 1, 1, 2, 0, 1, 1, 1, 0);
+	diamondSquare(2, 0, 3, 1, 4, 0, 3, 1, 3, 0);
+
+	diamondSquare(0, 0, 1, 1, 0, 2, 1, 1, 0, 1);
+	diamondSquare(2, 0, 3, 1, 2, 2, 1, 1, 2, 1);
+	diamondSquare(4, 0, 3, 1, 4, 2, 3, 1, 4, 1);
+
+	diamondSquare(1, 1, 2, 2, 1, 3, 0, 2, 1, 2);
+	diamondSquare(3, 1, 4, 2, 3, 3, 2, 2, 3, 2);
+
+	diamondSquare(0, 2, 1, 3, 0, 4, 1, 3, 0, 3);
+	diamondSquare(2, 2, 3, 3, 2, 4, 1, 3, 2, 3);
+	diamondSquare(4, 2, 3, 3, 4, 4, 3, 3, 4, 3);
+
+	diamondSquare(1, 3, 2, 4, 1, 3, 0, 4, 1, 4);
+	diamondSquare(3, 3, 4, 4, 3, 3, 2, 4, 3, 4);
+
+    }
+
+    /**
+     *
+     */
+    private void diamondSquare(int a1, int a2, int b1, int b2, int c1, int c2,
+	    int d1, int d2, int x, int y) {
+	float xAvg = (myGrid[a1][a2].getX() + myGrid[b1][b2].getX()) / 2;
+	float yAvg = (myGrid[a1][a2].getY() + myGrid[b1][b2].getY()
+		+ myGrid[c1][c2].getY() + myGrid[d1][d2].getY()) / 4;
+	float zAvg = (myGrid[a1][a2].getZ() + myGrid[d1][d2].getZ()) / 2;
+
+	myGrid[x][y] = new Vertex(xAvg, yAvg, zAvg);
+	myGrid[x][y].setY((float) ImprovedNoise.noise(xAvg, zAvg, yAvg));
+
+    }
+
+    public int getMyCol() {
+	return myCol;
+    }
+
+    public void setMyCol(int myCol) {
+	this.myCol = myCol;
+    }
+
+    public int getMyRow() {
+	return myRow;
+    }
+
+    public void setMyRow(int myRow) {
+	this.myRow = myRow;
+    }
+
+    public ArrayList<Vertex> getMyVertices() {
+	return myVertices;
+    }
+
+    public void addAdjacentFaceForInnerPoints() {
+	for (int i = 1; i < 3; i++) {
+	    for (int j = 1; j < 3; j++) {
+		Face f = new Face();
+		f.addVertex(myGrid[i - 1][j - 1]);
+		f.addVertex(myGrid[i][j - 1]);
+		f.addVertex(myGrid[i][j]);
+		f.addVertex(myGrid[i - 1][j]);
+		myGrid[i][j].addSharedFace(f);
+
+		f = new Face();
+		f.addVertex(myGrid[i][j - 1]);
+		f.addVertex(myGrid[i + 1][j - 1]);
+		f.addVertex(myGrid[i + 1][j]);
+		f.addVertex(myGrid[i][j]);
+		myGrid[i][j].addSharedFace(f);
+
+		f = new Face();
+		f.addVertex(myGrid[i][j]);
+		f.addVertex(myGrid[i + 1][j]);
+		f.addVertex(myGrid[i + 1][j + 1]);
+		f.addVertex(myGrid[i][j + 1]);
+		myGrid[i][j].addSharedFace(f);
+
+		f = new Face();
+		f.addVertex(myGrid[i - 1][j]);
+		f.addVertex(myGrid[i][j]);
+		f.addVertex(myGrid[i][j + 1]);
+		f.addVertex(myGrid[i - 1][j + 1]);
+		myGrid[i][j].addSharedFace(f);
+
+	    }
+	}
+
+    }
 
 }
