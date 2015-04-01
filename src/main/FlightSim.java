@@ -83,6 +83,8 @@ public class FlightSim extends Scene {
 	private boolean RESET_VIEW = false;
 	private boolean INIT_DONE = false;
 	private boolean INTERACTIVE_MODE = false;
+	private boolean SHOW_CONTROL = false;
+	private boolean SHOW_PATH = false;
 	
 	// animation state
 	private float myAngle;
@@ -215,9 +217,18 @@ public class FlightSim extends Scene {
 			gl.glEndList();
 			isCompiled = true;
 		}
-
 		
-		//myCurve.draw(gl, myResolution);
+	        // draw spline
+		if (SHOW_PATH)
+	        myCurve.draw(gl, myResolution);
+	        
+	        if (SHOW_CONTROL) {
+	                gl.glPointSize(5);
+	                gl.glColor3f(1, 0, 0);
+	                myCurve.drawControlPoints(gl);
+	            
+	        }
+	        
 		if (INTERACTIVE_MODE){
 		    float[] pt = myCurve.evaluateAt(myTime);
 		    gl.glTranslatef(-pt[0], -pt[1], -pt[2]);
@@ -250,9 +261,6 @@ public class FlightSim extends Scene {
 		if (RESET_VIEW) {
 			gl.glPopMatrix();
 			myTime = 0;
-			x = 0;
-			y = 5;
-			z = -20;
 			RESET_VIEW = false;
 			INIT_DONE = false;
 		}
@@ -435,6 +443,14 @@ public class FlightSim extends Scene {
 				RESET_VIEW = true;
 				FLIGHT_SPEED = DEFAULT_FLIGHT_SPEED;
 				break;
+			case KeyEvent.VK_K:
+			    	SHOW_CONTROL = !SHOW_CONTROL;
+				
+				break;	
+			case KeyEvent.VK_J:
+			    	SHOW_PATH = !SHOW_PATH;
+				
+				break;	
 			case KeyEvent.VK_Q:
 				JOptionPane.showMessageDialog(null,
 						"Thanks for using the FlightSim", "Message",

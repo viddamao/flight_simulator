@@ -48,3 +48,19 @@ Time Spent: 20 hours
 Resources used: [This summary](https://code.google.com/p/fractalterraingeneration/wiki/Diamond_Square) of the Diamond Square algorithm proved useful in conceptualizing the process.
 
 ###Wenjun Mao
+Started: Thursday, March 19  
+Finished: Sunday, March 22  
+Time Spent: 20 hours  
+
+
+
+
+
+_______________________
+Addendum
+
+Added interactive mode, keybord O
+Allow toggle path, keyboard J
+allow toggle control point , keyboard K
+allow changing animation speed , up down key(override)
+allow reset, keyboard R
