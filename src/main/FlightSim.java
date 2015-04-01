@@ -68,6 +68,7 @@ public class FlightSim extends Scene {
     private boolean INTERACTIVE_MODE = false;
     private boolean SHOW_CONTROL = false;
     private boolean SHOW_PATH = false;
+    private boolean DISPLAY_MODEL = true;
 
     // animation state
     private float myAngle;
@@ -113,7 +114,7 @@ public class FlightSim extends Scene {
 	myScale = 0.05f;
 	myStepSize = 1;
 	isCompiled = false;
-	myModel = new OBJModel(myModelFile);
+	//myModel = new OBJModel(myModelFile);
 
 	myTime = 0;
 
@@ -123,7 +124,6 @@ public class FlightSim extends Scene {
 	myTerrain.init(myHeightMap, myStepSize);
 	myTerrain.build();
 
-	gl.glEnable(GL2.GL_MAP1_VERTEX_3);
 	myCurve = new Spline(CONTROL_POINTS);
 
 	// createSkybox();
@@ -198,7 +198,7 @@ public class FlightSim extends Scene {
 
 	// draw spline
 	if (SHOW_PATH) {
-	    myCurve.draw(gl, myResolution);
+	    //myCurve.draw(gl, myResolution);
 	}
 
 	if (SHOW_CONTROL) {
@@ -216,12 +216,16 @@ public class FlightSim extends Scene {
 	    gl.glPushMatrix();
 	    gl.glTranslatef(pt[0], pt[1], pt[2]);
 	    gl.glTranslatef(0, 8, -5);
-	    // glut.glutSolidCube(1);
-	    gl.glPolygonMode(GL.GL_FRONT_AND_BACK, myRenderMode);
-	    gl.glScalef(2, 2, 2);
-	    myModel.render(gl);
-	    gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-
+	    if (DISPLAY_MODEL)
+	    glut.glutSolidCube(1);
+	    else{
+		gl.glEnable(GL2.GL_MAP1_VERTEX_3);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, myRenderMode);
+	    	gl.glScalef(2, 2, 2);
+	    	myModel.render(gl);
+	    	gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+	    	gl.glDisable(GL2.GL_MAP1_VERTEX_3);
+	    }
 	    gl.glPopMatrix();
 	}
 
@@ -435,6 +439,10 @@ public class FlightSim extends Scene {
 		break;
 	    case KeyEvent.VK_J:
 		SHOW_PATH = !SHOW_PATH;
+
+		break;
+	    case KeyEvent.VK_H:
+		DISPLAY_MODEL = !DISPLAY_MODEL;
 
 		break;
 	    case KeyEvent.VK_Q:
